@@ -11,7 +11,7 @@
 :root{
   --bg:#060606;--surface:#0c0c0c;--panel:#101010;
   --border:#1e1e1e;--border2:#2a2a2a;
-  --text:#e0e0e0;--muted:#404040;--dim:#181818;
+  --text:#e8e8e8;--muted:#888888;--dim:#181818;
   --gold:#c8a84b;--font:'DM Mono',monospace;
   --tile-even:#161616;--tile-odd:#0c0c0c;--tile-border:#070707;
   --tile-num:#666;--edge-label:#505050;
@@ -34,7 +34,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .logo-sub{font-size:.6rem;letter-spacing:.42em;color:var(--muted);text-transform:uppercase;margin-top:3px}
 .header-controls{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end;flex:1;min-width:0}
 .seg{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
-.seg-btn{padding:5px 10px;background:transparent;border:none;color:var(--muted);font-family:var(--font);font-size:.63rem;letter-spacing:.1em;cursor:pointer;transition:color .15s,background .15s;text-transform:uppercase;white-space:nowrap;min-height:32px}
+.seg-btn{padding:5px 10px;background:transparent;border:none;color:var(--muted);font-family:var(--font);font-size:.68rem;letter-spacing:.08em;cursor:pointer;transition:color .15s,background .15s;text-transform:uppercase;white-space:nowrap;min-height:32px}
 .seg-btn.active{background:var(--dim);color:var(--text)}
 .seg-btn:not(:last-child){border-right:1px solid var(--border)}
 .icon-btn{padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--muted);font-family:var(--font);font-size:.8rem;cursor:pointer;transition:color .15s,border-color .15s;white-space:nowrap;min-height:32px;min-width:32px;display:inline-flex;align-items:center;justify-content:center}
@@ -43,11 +43,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 /* TURN BAR */
 .turn-bar{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:10px}
 .turn-meta{display:flex;flex-direction:column;justify-content:center;padding:6px 12px;border-right:1px solid var(--border);min-width:52px;flex-shrink:0}
-.turn-meta-label{font-size:.56rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+.turn-meta-label{font-size:.62rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
 .turn-meta-val{font-size:.82rem;color:var(--text);margin-top:1px}
 .pcards{display:flex;flex:1;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
 .pcards::-webkit-scrollbar{display:none}
-.pcard{flex:1;min-width:80px;display:flex;align-items:center;gap:6px;padding:6px 8px;opacity:.25;transition:opacity .25s,background .25s;border-right:1px solid var(--border)}
+.pcard{flex:1;min-width:80px;display:flex;align-items:center;gap:6px;padding:6px 8px;opacity:.45;transition:opacity .25s,background .25s;border-right:1px solid var(--border)}
 .pcard:last-child{border-right:none}
 .pcard.active{opacity:1;background:var(--dim)}
 .pcard-bar{width:3px;height:26px;border-radius:2px;flex-shrink:0}
@@ -55,12 +55,12 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 @keyframes barPulse{0%,100%{opacity:.5}50%{opacity:1}}
 .ptoken-shape{font-size:10px;flex-shrink:0;line-height:1}
 .pcard-info{flex:1;min-width:0}
-.pname{font-size:.62rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .15s;display:block;max-width:100%}
+.pname{font-size:.67rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .15s;display:block;max-width:100%}
 .pname:hover{color:var(--text)}
 .pname[contenteditable="true"]{outline:none;border-bottom:1px solid var(--border2);color:var(--text);cursor:text}
 .pcard.active .pname{color:var(--text)}
-.ptile{font-size:.72rem;color:var(--text)}
-.pcard-stats{font-size:.57rem;color:var(--muted);letter-spacing:.04em;margin-top:1px;white-space:nowrap}
+.ptile{font-size:.78rem;color:var(--text)}
+.pcard-stats{font-size:.62rem;color:var(--muted);letter-spacing:.04em;margin-top:1px;white-space:nowrap}
 .pcard-progress{width:100%;height:2px;background:var(--border);border-radius:1px;margin-top:4px;overflow:hidden}
 .pcard-progress-fill{height:100%;border-radius:1px;transition:width .4s ease;width:0%}
 
@@ -74,7 +74,7 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 /* SIDE */
 .side{display:flex;flex-direction:column;gap:7px}
 .panel{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:11px 12px}
-.panel-label{font-size:.58rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:7px}
+.panel-label{font-size:.65rem;letter-spacing:.22em;color:#aaa;text-transform:uppercase;margin-bottom:7px}
 
 /* DICE */
 .dice-panel{display:flex;flex-direction:column;align-items:center;gap:8px}
@@ -87,11 +87,11 @@ header{display:flex;align-items:flex-start;justify-content:space-between;margin-
 .roll-btn:disabled{opacity:.12;cursor:not-allowed}
 body.light .roll-btn{color:#f0ece4}
 .key-hints{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.key-hint{font-size:.58rem;color:var(--muted)}
-.key-hint kbd{padding:1px 4px;background:var(--dim);border:1px solid var(--border2);border-radius:2px;font-size:.56rem;color:#777}
+.key-hint{font-size:.63rem;color:var(--muted)}
+.key-hint kbd{padding:1px 4px;background:var(--dim);border:1px solid var(--border2);border-radius:2px;font-size:.6rem;color:#aaa}
 
 /* STATUS */
-.status-msg{font-size:.68rem;font-weight:300;color:var(--text);line-height:1.7;min-height:2rem;opacity:.85}
+.status-msg{font-size:.74rem;font-weight:400;color:var(--text);line-height:1.7;min-height:2rem;opacity:1}
 .ai-thinking{display:none;align-items:center;gap:5px;margin-top:5px}
 .ai-thinking.visible{display:flex}
 .ai-dots{display:flex;gap:3px}
@@ -107,18 +107,18 @@ body.light .roll-btn{color:#f0ece4}
 .log-list{display:flex;flex-direction:column;gap:2px;max-height:138px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
 .log-list::-webkit-scrollbar{width:2px}
 .log-list::-webkit-scrollbar-thumb{background:var(--border2)}
-.log-entry{font-size:.63rem;color:var(--muted);padding:2px 6px;border-left:2px solid transparent;animation:slideIn .15s ease;line-height:1.45}
-.log-entry.p0{border-color:#ffffff;color:rgba(210,210,210,.75)}
-.log-entry.p1{border-color:#c8a84b;color:rgba(200,168,75,.85)}
-.log-entry.p2{border-color:#5cf6b0;color:rgba(92,246,176,.8)}
-.log-entry.p3{border-color:#e056aa;color:rgba(224,86,170,.85)}
-.log-entry.p4{border-color:#5b9cf6;color:rgba(91,156,246,.85)}
-.log-entry.p5{border-color:#f97316;color:rgba(249,115,22,.85)}
-.log-entry.event{border-color:#2a2a2a;color:rgba(140,140,140,.65)}
+.log-entry{font-size:.68rem;color:var(--muted);padding:2px 6px;border-left:2px solid transparent;animation:slideIn .15s ease;line-height:1.45}
+.log-entry.p0{border-color:#ffffff;color:rgba(220,220,220,.9)}
+.log-entry.p1{border-color:#c8a84b;color:rgba(200,168,75,.95)}
+.log-entry.p2{border-color:#5cf6b0;color:rgba(92,246,176,.9)}
+.log-entry.p3{border-color:#e056aa;color:rgba(224,86,170,.95)}
+.log-entry.p4{border-color:#5b9cf6;color:rgba(91,156,246,.95)}
+.log-entry.p5{border-color:#f97316;color:rgba(249,115,22,.95)}
+.log-entry.event{border-color:#2a2a2a;color:rgba(160,160,160,.8)}
 .log-entry.win{border-color:var(--gold);color:var(--gold)}
 @keyframes slideIn{from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:none}}
 
-.restart-btn{width:100%;padding:8px 0;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:5px;font-family:var(--font);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s;min-height:38px}
+.restart-btn{width:100%;padding:8px 0;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:5px;font-family:var(--font);font-size:.67rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:color .15s,border-color .15s;min-height:38px}
 .restart-btn:hover{color:var(--text);border-color:var(--border2)}
 
 /* WIN OVERLAY */
@@ -148,22 +148,22 @@ body.light .win-card .restart-btn{color:#f0ece4}
 .settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(16px);animation:fadeIn .2s ease;padding:12px}
 .settings-card{background:var(--panel);border:1px solid var(--border2);border-radius:10px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column}
 .settings-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
-.settings-title{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text)}
+.settings-title{font-size:.75rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text)}
 .settings-close{background:transparent;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:4px;line-height:1;transition:color .15s}
 .settings-close:hover{color:var(--text)}
 .settings-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
-.stab{flex:1;min-width:60px;padding:9px 6px;background:transparent;border:none;color:var(--muted);font-family:var(--font);font-size:.6rem;letter-spacing:.12em;cursor:pointer;text-transform:uppercase;transition:color .15s;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.stab{flex:1;min-width:60px;padding:9px 6px;background:transparent;border:none;color:var(--muted);font-family:var(--font);font-size:.65rem;letter-spacing:.1em;cursor:pointer;text-transform:uppercase;transition:color .15s;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
 .stab.active{color:var(--text);border-bottom-color:var(--gold)}
 .settings-body{flex:1;padding:0}
 .settings-section{padding:14px 18px;border-bottom:1px solid var(--border)}
 .settings-section:last-child{border-bottom:none}
-.settings-section-title{font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.settings-section-title{font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:#999;margin-bottom:10px}
 .settings-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.03)}
 body.light .settings-row{border-bottom-color:rgba(0,0,0,.04)}
 .settings-row:last-child{border-bottom:none}
 .settings-row-info{flex:1}
-.settings-row-label{font-size:.64rem;color:var(--text)}
-.settings-row-desc{font-size:.55rem;color:var(--muted);margin-top:3px;line-height:1.5}
+.settings-row-label{font-size:.7rem;color:var(--text)}
+.settings-row-desc{font-size:.61rem;color:var(--muted);margin-top:3px;line-height:1.5}
 .toggle{position:relative;width:38px;height:22px;cursor:pointer;flex-shrink:0;margin-top:1px}
 .toggle input{opacity:0;width:0;height:0;position:absolute}
 .toggle-track{position:absolute;inset:0;background:var(--border2);border-radius:11px;transition:background .2s}
@@ -212,27 +212,78 @@ body.light .mobile-roll-btn{color:#f0ece4}
 @keyframes winGlow{0%,100%{opacity:.3}50%{opacity:.7}}
 @keyframes tokenRing{0%,100%{opacity:.2}50%{opacity:.5}}
 
-/* RESPONSIVE */
-/* ≤ 720px: stack board + side into single column */
+/* ── MOBILE BOTTOM SHEET ───────────────────────────────────────── */
+.bottom-sheet{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:60;
+  background:var(--panel);
+  border-top:1px solid var(--border2);
+  border-radius:16px 16px 0 0;
+  padding:0 0 env(safe-area-inset-bottom,12px);
+  box-shadow:0 -8px 32px rgba(0,0,0,.6);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sheet-handle{
+  width:36px;height:4px;border-radius:2px;
+  background:var(--border2);margin:10px auto 0;
+}
+.sheet-tabs{
+  display:flex;border-bottom:1px solid var(--border);
+  margin:8px 0 0;
+}
+.sheet-tab{
+  flex:1;padding:9px 6px;background:transparent;border:none;
+  color:var(--muted);font-family:var(--font);font-size:.62rem;
+  letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s;
+}
+.sheet-tab.active{color:var(--text);border-bottom-color:var(--gold)}
+.sheet-body{padding:10px 14px 14px;max-height:38vh;overflow-y:auto}
+.sheet-roll-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px 6px;
+}
+.sheet-status{
+  flex:1;font-size:.72rem;color:var(--text);line-height:1.5;
+}
+.sheet-roll-btn{
+  flex-shrink:0;padding:12px 28px;
+  background:var(--text);color:#060606;
+  border:none;border-radius:8px;
+  font-family:var(--font);font-size:.82rem;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;transition:background .15s,transform .1s,opacity .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.sheet-roll-btn:active{transform:scale(.96)}
+.sheet-roll-btn:disabled{opacity:.15;cursor:not-allowed}
+body.light .sheet-roll-btn{color:#f0ece4}
+
 @media(max-width:720px){
-  .app{padding:8px 8px 88px}/* bottom padding for fixed roll btn */
-  .game-area{grid-template-columns:1fr;gap:8px}
+  .app{padding:6px 6px 0}
+  /* Board takes full width, no bottom padding pushing it up */
+  .game-area{grid-template-columns:1fr;gap:0}
   .board-col{width:100%}
-  .side{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-  .log-section,.actions-row,.chat-panel{grid-column:1/-1}
+  /* Hide desktop side panel entirely on mobile */
+  .side{display:none !important}
+  /* Hide old mobile roll button */
+  .mobile-roll-area{display:none !important}
   .side-roll-only{display:none !important}
-  .mobile-roll-area{display:block;position:fixed;bottom:0;left:0;right:0;
-    padding:10px 14px 18px;background:linear-gradient(transparent,var(--bg) 35%);z-index:50}
-  .mobile-roll-btn{border-radius:10px;padding:15px 0;font-size:.88rem}
   .key-hints{display:none}
-  header{flex-direction:column;align-items:flex-start;gap:5px;margin-bottom:8px}
+  /* Board fills screen width with tiny padding */
+  .board-wrap{border-radius:6px;padding:4px}
+  /* Turn bar tighter */
+  .turn-bar{margin-bottom:6px}
+  /* Add space at bottom for sheet */
+  #appRoot{padding-bottom:200px}
+  /* Show bottom sheet */
+  .bottom-sheet{display:block}
+  header{flex-direction:column;align-items:flex-start;gap:5px;margin-bottom:6px}
   .header-controls{width:100%;overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .header-controls::-webkit-scrollbar{display:none}
-  .chat-messages{max-height:90px}
 }
-/* ≤ 480px: narrower adjustments */
 @media(max-width:480px){
-  .side{grid-template-columns:1fr}
   .win-card{padding:18px 14px;max-width:calc(100vw - 24px)}
   .settings-card{max-height:94vh;max-width:calc(100vw - 16px)}
   .pcard{min-width:72px;padding:5px 7px}
@@ -278,8 +329,8 @@ body.light .lobby-btn{color:#f0ece4}
 .lobby-divider span{font-size:.52rem;color:var(--muted);letter-spacing:.2em;text-transform:uppercase}
 .lobby-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px}
 .lobby-section-title{font-size:.62rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.code-display{text-align:center;padding:12px 0}
-.code-value{font-size:3.6rem;font-weight:300;letter-spacing:.6em;color:var(--gold);padding-right:.6em;line-height:1}
+.code-display{text-align:center;padding:12px 0;display:flex;flex-direction:column;align-items:center}
+.code-value{font-size:3.6rem;font-weight:300;letter-spacing:.6em;color:var(--gold);padding-right:.6em;line-height:1;text-align:center;width:100%}
 .code-hint{font-size:.56rem;color:var(--muted);margin-top:6px;letter-spacing:.08em}
 .copy-btn{margin-top:8px;padding:4px 14px;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-family:var(--font);font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:color .15s}
 .copy-btn:hover{color:var(--text)}
@@ -311,13 +362,13 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 .chat-messages{max-height:110px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;margin-bottom:8px;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
 .chat-messages::-webkit-scrollbar{width:2px}
 .chat-messages::-webkit-scrollbar-thumb{background:var(--border2)}
-.chat-msg{font-size:.6rem;line-height:1.55;word-break:break-word}
+.chat-msg{font-size:.66rem;line-height:1.55;word-break:break-word}
 .chat-name{font-weight:500;margin-right:5px}
 .chat-text{color:var(--muted)}
 .chat-input-row{display:flex;gap:6px}
-.chat-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:.6rem;padding:6px 8px;outline:none;min-width:0;transition:border-color .15s}
+.chat-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--text);font-family:var(--font);font-size:.66rem;padding:6px 8px;outline:none;min-width:0;transition:border-color .15s}
 .chat-input:focus{border-color:var(--border2)}
-.chat-send{padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--muted);font-family:var(--font);font-size:.75rem;cursor:pointer;transition:color .15s;flex-shrink:0}
+.chat-send{padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:3px;color:var(--muted);font-family:var(--font);font-size:.8rem;cursor:pointer;transition:color .15s;flex-shrink:0}
 .chat-send:hover{color:var(--text)}
 .spectator-notice{font-size:.56rem;color:var(--muted);letter-spacing:.1em;text-align:center;padding:4px 0;opacity:.6}
 
@@ -345,12 +396,11 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 .react-btn{
   width:32px;height:32px;flex-shrink:0;
   background:var(--surface);border:1px solid var(--border);border-radius:6px;
-  color:var(--muted);cursor:pointer;
+  cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:color .14s,border-color .14s,transform .1s,background .14s;
   padding:6px;-webkit-tap-highlight-color:transparent;position:relative}
 .react-btn svg{width:100%;height:100%;display:block;overflow:visible}
-.react-btn:hover{color:var(--text);border-color:var(--border2);background:var(--dim);transform:scale(1.1)}
 .react-btn:active{transform:scale(.92)}
 .react-btn .react-tip{
   position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
@@ -361,12 +411,29 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 .react-btn:hover .react-tip{opacity:1}
 .react-label{font-size:.5rem;color:var(--muted);letter-spacing:.1em;
   text-transform:uppercase;margin-left:auto;opacity:.6}
+
+/* Per-reaction colors */
+.react-btn.react-burst{color:#f5c842;border-color:rgba(245,200,66,.25);background:rgba(245,200,66,.06)}
+.react-btn.react-burst:hover{color:#ffe066;border-color:rgba(245,200,66,.55);background:rgba(245,200,66,.14);transform:scale(1.12)}
+.react-btn.react-snake{color:#d94f4f;border-color:rgba(217,79,79,.25);background:rgba(217,79,79,.06)}
+.react-btn.react-snake:hover{color:#ff6b6b;border-color:rgba(217,79,79,.55);background:rgba(217,79,79,.14);transform:scale(1.12)}
+.react-btn.react-ladder{color:#c8a84b;border-color:rgba(200,168,75,.25);background:rgba(200,168,75,.06)}
+.react-btn.react-ladder:hover{color:#e8c46a;border-color:rgba(200,168,75,.55);background:rgba(200,168,75,.14);transform:scale(1.12)}
+.react-btn.react-thumbsup{color:#5b9cf6;border-color:rgba(91,156,246,.25);background:rgba(91,156,246,.06)}
+.react-btn.react-thumbsup:hover{color:#7db5ff;border-color:rgba(91,156,246,.55);background:rgba(91,156,246,.14);transform:scale(1.12)}
+.react-btn.react-fire{color:#f97316;border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.06)}
+.react-btn.react-fire:hover{color:#ff8c3a;border-color:rgba(249,115,22,.55);background:rgba(249,115,22,.14);transform:scale(1.12)}
 /* Floating reaction popup above board */
 .reaction-popup{
   position:fixed;pointer-events:none;z-index:500;
   width:28px;height:28px;color:var(--text);
   animation:reactFly 2s cubic-bezier(0.2,0.8,0.3,1) forwards}
 .reaction-popup svg{width:100%;height:100%;overflow:visible}
+.reaction-popup[data-reaction="burst"]{color:#f5c842}
+.reaction-popup[data-reaction="snake"]{color:#d94f4f}
+.reaction-popup[data-reaction="ladder"]{color:#c8a84b}
+.reaction-popup[data-reaction="thumbsup"]{color:#5b9cf6}
+.reaction-popup[data-reaction="fire"]{color:#f97316}
 @keyframes reactFly{
   0%{opacity:0;transform:translateY(0) scale(.3)}
   18%{opacity:1;transform:translateY(-14px) scale(1.2)}
@@ -481,25 +548,28 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 
 
 /* ── BOARD PRESETS ─────────────────────────────────────────────── */
-.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 18px}
-.preset-card{border:1px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;
-  transition:border-color .18s,background .18s;position:relative;overflow:hidden}
+.preset-grid{display:flex;flex-direction:column;gap:6px;padding:14px 18px}
+.preset-card{border:1px solid var(--border);border-radius:6px;padding:10px 14px;cursor:pointer;
+  transition:border-color .18s,background .18s;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px}
 .preset-card:hover{border-color:var(--border2);background:var(--dim)}
 .preset-card.active{border-color:var(--gold);background:rgba(200,168,75,.05)}
-.preset-card-name{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-bottom:4px}
-.preset-card-desc{font-size:.56rem;color:var(--muted);line-height:1.5}
-.preset-card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
-.preset-tag{font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;
-  border-radius:2px;border:1px solid var(--border)}
+.preset-card-body{flex:1;min-width:0}
+.preset-card-name{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin-bottom:3px}
+.preset-card-desc{font-size:.55rem;color:var(--muted);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preset-card-tags{display:flex;gap:4px;flex-wrap:nowrap;margin-top:5px;overflow:hidden}
+.preset-tag{font-size:.48rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 5px;
+  border-radius:2px;border:1px solid var(--border);white-space:nowrap;flex-shrink:0}
 .preset-tag.snakes{border-color:rgba(217,79,79,.4);color:rgba(217,79,79,.8)}
 .preset-tag.ladders{border-color:rgba(200,168,75,.4);color:rgba(200,168,75,.8)}
 .preset-tag.difficulty{border-color:var(--border2);color:var(--muted)}
-.preset-card-mini{position:absolute;right:8px;top:50%;transform:translateY(-50%);
-  opacity:.12;font-size:1.6rem;pointer-events:none}
-.preset-card.active .preset-card-mini{opacity:.25}
+.preset-card-mini{font-size:1.4rem;opacity:.45;flex-shrink:0;width:28px;text-align:center;pointer-events:none}
+.preset-card.active .preset-card-mini{opacity:.7}
 
 
-/* LOBBY MOBILE */
+/* Hide number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
 @media(max-width:680px){
   .lobby-overlay{padding:12px}
   .lobby-card{gap:12px}
@@ -514,14 +584,14 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
   .lobby-rules-desc{font-size:.54rem}
   .color-swatch{width:28px;height:28px}
   .lobby-seg-btn{padding:5px 10px;font-size:.55rem}
-  .preset-grid{grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+  .preset-grid{gap:5px;padding:10px}
   .preset-card-name{font-size:.58rem}
   .preset-card-desc{font-size:.5rem}
 }
 @media(max-width:400px){
   .lobby-overlay{padding:8px}
   .code-value{font-size:2rem;letter-spacing:.4em}
-  .preset-grid{grid-template-columns:1fr}
+  .preset-grid{gap:4px;padding:8px}
   .lobby-seg-btn{padding:5px 8px;font-size:.5rem}
 }
 
@@ -677,7 +747,7 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
       </div>
       <div class="online-badge" id="onlineBadge">Online</div>
       <div class="room-code-pill" id="roomCodePill" onclick="Lobby.copyCode()" title="Click to copy room code"></div>
-      <button class="icon-btn" id="localLeaveBtn" style="display:none" onclick="Lobby.exitToMenu()" title="Back to menu">← Menu</button>
+      <button class="icon-btn" id="localLeaveBtn" style="display:none" onclick="Lobby.exitToMenu()" title="Back to menu">Menu</button>
       <button class="icon-btn" id="leaveBtn" style="display:none" onclick="MP.leave()" title="Leave game">Leave</button>
       <button class="icon-btn notif-btn" id="notifBtn" onclick="Notifications.toggle()" title="Turn notifications" style="display:none">🔔</button>
       <div class="rounds-badge" id="roundsBadge"></div>
@@ -728,8 +798,6 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
     </div>
 
     <div class="side">
-
-      <!-- Dice panel (hidden on mobile, replaced by fixed bottom button) -->
       <div class="panel dice-panel side-roll-only">
         <div class="dice-wrap" id="diceWrap" title="Click to roll">
           <svg id="diceSVG" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
@@ -777,27 +845,48 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 
         <!-- SVG Reactions bar -->
         <div class="reactions-bar" id="reactionsBar">
-          <button class="react-btn" onclick="MP.pushReaction('burst')">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10" cy="10" r="2.4" fill="currentColor" stroke="none"/><line x1="10" y1="1.5" x2="10" y2="4.5"/><line x1="10" y1="15.5" x2="10" y2="18.5"/><line x1="1.5" y1="10" x2="4.5" y2="10"/><line x1="15.5" y1="10" x2="18.5" y2="10"/><line x1="3.6" y1="3.6" x2="5.7" y2="5.7"/><line x1="14.3" y1="14.3" x2="16.4" y2="16.4"/><line x1="16.4" y1="3.6" x2="14.3" y2="5.7"/><line x1="5.7" y1="14.3" x2="3.6" y2="16.4"/></svg>
+          <button class="react-btn react-burst" onclick="MP.pushReaction('burst')">
+            <!-- Party popper / confetti celebrate -->
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- popper cone -->
+              <path d="M3 17 L9 11" stroke-width="2.2"/>
+              <path d="M3 17 L7 16 L4 13 Z" fill="currentColor" stroke="none"/>
+              <!-- streamers / confetti -->
+              <line x1="10" y1="4" x2="11.2" y2="6.5" stroke-width="1.4"/>
+              <line x1="14" y1="6" x2="12" y2="7.5" stroke-width="1.4"/>
+              <line x1="16" y1="10" x2="13.5" y2="10.2" stroke-width="1.4"/>
+              <!-- stars -->
+              <circle cx="13" cy="4" r=".9" fill="currentColor" stroke="none"/>
+              <circle cx="16.5" cy="7" r=".7" fill="currentColor" stroke="none"/>
+              <circle cx="11" cy="9" r=".7" fill="currentColor" stroke="none"/>
+              <circle cx="15.5" cy="13" r=".6" fill="currentColor" stroke="none"/>
+            </svg>
             <span class="react-tip">Celebrate</span>
           </button>
-          <button class="react-btn" onclick="MP.pushReaction('skull')">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5C6.4 2.5 3.5 5.2 3.5 8.5c0 2.1 1.1 4 2.8 5.1V15h7.4v-1.4c1.7-1.1 2.8-3 2.8-5.1 0-3.3-2.9-6-6.5-6z"/><line x1="7.2" y1="15" x2="7.2" y2="17.5"/><line x1="10" y1="15" x2="10" y2="17.5"/><line x1="12.8" y1="15" x2="12.8" y2="17.5"/><circle cx="7.8" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12.2" cy="8.5" r="1.3" fill="currentColor" stroke="none"/></svg>
-            <span class="react-tip">Shocked</span>
-          </button>
-          <button class="react-btn" onclick="MP.pushReaction('snake')">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 15.5C4.5 12.5 8 12 8 9.5C8 7 4.5 7 4.5 4.5"/><path d="M8.2 4.5C9.5 4.5 11 5.4 11 7C11 8.6 8 9 8 10.5C8 12 10 13 12 13C14 13 16 11.8 16 10"/><circle cx="4.5" cy="4" r="1.4" fill="currentColor" stroke="none"/><circle cx="5.1" cy="3.2" r=".5" fill="var(--bg)" stroke="none"/><circle cx="3.9" cy="3.2" r=".5" fill="var(--bg)" stroke="none"/></svg>
+          <button class="react-btn react-snake" onclick="MP.pushReaction('snake')">
+            <!-- Snake: coiled S-shape body with distinct triangular head and tongue -->
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <!-- body: S-curve coil -->
+              <path d="M5 16 C2 16 2 12 5 12 C8 12 8 8 5 8 C2 8 2 4.5 5 4.5 C7 4.5 8.5 5.5 9 7" stroke-width="2.2" fill="none"/>
+              <!-- head -->
+              <ellipse cx="12" cy="6" rx="3" ry="2.2" fill="currentColor" stroke="none"/>
+              <!-- eye -->
+              <circle cx="13.2" cy="5.3" r=".6" fill="var(--bg)" stroke="none"/>
+              <!-- tongue (forked) at right tip of head -->
+              <line x1="14.9" y1="6" x2="17.8" y2="4.6" stroke-width="1" stroke="currentColor"/>
+              <line x1="14.9" y1="6" x2="17.8" y2="7.4" stroke-width="1" stroke="currentColor"/>
+            </svg>
             <span class="react-tip">Snake!</span>
           </button>
-          <button class="react-btn" onclick="MP.pushReaction('ladder')">
+          <button class="react-btn react-ladder" onclick="MP.pushReaction('ladder')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6.5" y1="2" x2="6.5" y2="18"/><line x1="13.5" y1="2" x2="13.5" y2="18"/><line x1="6.5" y1="5.5" x2="13.5" y2="5.5"/><line x1="6.5" y1="10" x2="13.5" y2="10"/><line x1="6.5" y1="14.5" x2="13.5" y2="14.5"/></svg>
             <span class="react-tip">Ladder!</span>
           </button>
-          <button class="react-btn" onclick="MP.pushReaction('thumbsup')">
+          <button class="react-btn react-thumbsup" onclick="MP.pushReaction('thumbsup')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.5L9.2 3C10.2 3 11.2 3.7 11.2 5V8H15.5C16.2 8 16.8 8.6 16.6 9.3L15.3 15C15.1 15.7 14.4 16.5 13.6 16.5H7"/><rect x="3.5" y="9.5" width="3.5" height="7" rx="1" fill="currentColor" stroke="none" opacity=".7"/></svg>
             <span class="react-tip">Nice</span>
           </button>
-          <button class="react-btn" onclick="MP.pushReaction('fire')">
+          <button class="react-btn react-fire" onclick="MP.pushReaction('fire')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z" fill="currentColor" stroke="none" opacity=".18"/><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z"/><path d="M10 17.5C8 17.5 7 16 7 14.5C7 12.5 8.5 11.5 8.5 9.5C9.5 10.5 9.5 12 10 12C10.5 10.8 11.5 9.8 11.5 8C12.8 9 13 10.5 13 12C13 15 12 17.5 10 17.5Z" fill="currentColor" opacity=".4" stroke="none"/></svg>
             <span class="react-tip">Fire</span>
           </button>
@@ -815,6 +904,21 @@ body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
 
     </div><!-- /.side -->
   </div><!-- /.game-area -->
+
+<!-- MOBILE BOTTOM SHEET -->
+<div class="bottom-sheet" id="bottomSheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-roll-row">
+    <div class="sheet-status" id="sheetStatus">Roll to begin.</div>
+    <button class="sheet-roll-btn" id="sheetRollBtn" onclick="GameController.handleRoll()" disabled>Roll</button>
+  </div>
+  <div class="sheet-tabs">
+    <button class="sheet-tab active" onclick="Sheet.show('log')">Log</button>
+    <button class="sheet-tab" onclick="Sheet.show('stats')">Players</button>
+    <button class="sheet-tab" id="sheetChatTab" onclick="Sheet.show('chat')" style="display:none">Chat</button>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
 
 <!-- WIN OVERLAY -->
 <div class="win-overlay" id="winOverlay" style="display:none" role="dialog" aria-modal="true" aria-label="Game over">
@@ -879,7 +983,7 @@ const SHAPES=['●','▲','■','◆','★','✦'];
 const REACT_SVG_MAP={
   burst:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10" cy="10" r="2.5" fill="currentColor" stroke="none"/><line x1="10" y1="1.5" x2="10" y2="4.5"/><line x1="10" y1="15.5" x2="10" y2="18.5"/><line x1="1.5" y1="10" x2="4.5" y2="10"/><line x1="15.5" y1="10" x2="18.5" y2="10"/><line x1="3.7" y1="3.7" x2="5.8" y2="5.8"/><line x1="14.2" y1="14.2" x2="16.3" y2="16.3"/><line x1="16.3" y1="3.7" x2="14.2" y2="5.8"/><line x1="5.8" y1="14.2" x2="3.7" y2="16.3"/></svg>`,
   skull:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2.5C6.4 2.5 3.5 5.2 3.5 8.5c0 2.1 1.1 4 2.8 5.1V15h7.4v-1.4c1.7-1.1 2.8-3 2.8-5.1 0-3.3-2.9-6-6.5-6z"/><line x1="7.2" y1="15" x2="7.2" y2="17.5"/><line x1="10" y1="15" x2="10" y2="17.5"/><line x1="12.8" y1="15" x2="12.8" y2="17.5"/><circle cx="7.8" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12.2" cy="8.5" r="1.3" fill="currentColor" stroke="none"/></svg>`,
-  snake:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 15.5 C4.5 12.5 8 12 8 9.5 C8 7 4.5 7 4.5 4.5"/><path d="M8.2 4.5 C9.5 4.5 11 5.4 11 7 C11 8.6 8 9 8 10.5 C8 12 10 13 12 13 C14 13 16 11.8 16 10"/><circle cx="4.5" cy="4" r="1.4" fill="currentColor" stroke="none"/></svg>`,
+  snake:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16 C2 16 2 12 5 12 C8 12 8 8 5 8 C2 8 2 4.5 5 4.5 C7 4.5 8.5 5.5 9 7" stroke-width="2.2" fill="none"/><ellipse cx="12" cy="6" rx="3" ry="2.2" fill="currentColor" stroke="none"/><circle cx="13.2" cy="5.3" r=".6" fill="#060606" stroke="none"/><line x1="14.9" y1="6" x2="17.8" y2="4.6" stroke-width="1" stroke="currentColor"/><line x1="14.9" y1="6" x2="17.8" y2="7.4" stroke-width="1" stroke="currentColor"/></svg>`,
   ladder:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="6.5" y1="2" x2="6.5" y2="18"/><line x1="13.5" y1="2" x2="13.5" y2="18"/><line x1="6.5" y1="5.5" x2="13.5" y2="5.5"/><line x1="6.5" y1="10" x2="13.5" y2="10"/><line x1="6.5" y1="14.5" x2="13.5" y2="14.5"/></svg>`,
   thumbsup:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.5L9.2 3C10.2 3 11.2 3.7 11.2 5V8H15.5C16.2 8 16.8 8.6 16.6 9.3L15.3 15C15.1 15.7 14.4 16.5 13.6 16.5H7"/><rect x="3.5" y="9.5" width="3.5" height="7" rx="1" fill="currentColor" stroke="none" opacity=".65"/></svg>`,
   fire:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z" fill="currentColor" stroke="none" opacity=".2"/><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z"/></svg>`
@@ -1081,15 +1185,24 @@ const Settings={
   },
   _presetsTab(body){
     const grid=document.createElement('div');grid.className='preset-grid';
+    // SVG icon paths for each preset (no emoji)
+    const icons={
+      classic:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="14" height="14" rx="3"/><circle cx="7" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="7" cy="13" r="1" fill="currentColor" stroke="none"/><circle cx="13" cy="13" r="1" fill="currentColor" stroke="none"/></svg>`,
+      chaos:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 L12 8 L17 8 L13 11 L15 17 L10 14 L5 17 L7 11 L3 8 L8 8 Z" stroke-width="1.5"/></svg>`,
+      shortcut:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16 L16 4"/><path d="M10 4 L16 4 L16 10"/></svg>`,
+      gauntlet:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2 L10 18"/><path d="M4 7 L16 13"/><path d="M4 13 L16 7"/></svg>`,
+      mirror:`<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="10" y1="2" x2="10" y2="18"/><path d="M4 6 Q7 10 4 14"/><path d="M16 6 Q13 10 16 14"/></svg>`
+    };
     Object.entries(BOARD_PRESETS).forEach(([key,p])=>{
       const card=document.createElement('div');
       card.className='preset-card'+(Config.boardPreset===key?' active':'');
-      const icons={'classic':'🎲','chaos':'💀','shortcut':'🚀','gauntlet':'⚔','mirror':'⚖'};
       card.innerHTML=`
-        <div class="preset-card-mini">${icons[key]||'🎲'}</div>
-        <div class="preset-card-name">${p.name}</div>
-        <div class="preset-card-desc">${p.desc}</div>
-        <div class="preset-card-tags">${p.tags.map(t=>`<span class="preset-tag ${t.c}">${t.t}</span>`).join('')}</div>`;
+        <div class="preset-card-mini">${icons[key]||icons.classic}</div>
+        <div class="preset-card-body">
+          <div class="preset-card-name">${p.name}</div>
+          <div class="preset-card-desc">${p.desc}</div>
+          <div class="preset-card-tags">${p.tags.map(t=>`<span class="preset-tag ${t.c}">${t.t}</span>`).join('')}</div>
+        </div>`;
       card.addEventListener('click',()=>{
         applyPreset(key);
         grid.querySelectorAll('.preset-card').forEach(c=>c.classList.remove('active'));
@@ -1116,7 +1229,7 @@ const Settings={
         entries.forEach(([from,to])=>{
           const item=document.createElement('div');item.className='sl-item';
           const diff=Math.abs(+to-+from);
-          item.innerHTML=`<span class="sl-item-icon">${type==='snake'?'🐍':'🪜'}</span><span class="sl-item-text">${from} → ${to} <span style="color:var(--muted);font-size:.52rem">(${type==='snake'?'-':'+'}${diff})</span></span><button class="sl-del" data-f="${from}">×</button>`;
+          item.innerHTML=`<span class="sl-item-icon">${type==='snake'?'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2 Q10 4 9 7 Q8 10 11 12" stroke="#d94f4f" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="7" cy="2" r="2" fill="#d94f4f"/></svg>':'<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><line x1="4" y1="2" x2="4" y2="12" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"/><line x1="10" y1="2" x2="10" y2="12" stroke="#c8a84b" stroke-width="1.8" stroke-linecap="round"/><line x1="3" y1="5" x2="11" y2="5" stroke="#e8b84b" stroke-width="1.5" stroke-linecap="round"/><line x1="3" y1="9" x2="11" y2="9" stroke="#e8b84b" stroke-width="1.5" stroke-linecap="round"/></svg>'}</span><span class="sl-item-text">${from} → ${to} <span style="color:var(--muted);font-size:.52rem">(${type==='snake'?'-':'+'}${diff})</span></span><button class="sl-del" data-f="${from}">×</button>`;
           item.querySelector('.sl-del').addEventListener('click',()=>{delete(type==='snake'?Config.SNAKES:Config.LADDERS)[from];refresh();});
           list.appendChild(item);
         });
@@ -1244,34 +1357,200 @@ function buildFilters(){
   });
 }
 
-/* ── SNAKES (with head eyes & tongue) ──────────────────────────────────── */
+/* ── SNAKES (cute SVG snake with tapered body, head, eyes, tongue) ──────── */
 const SnakeRenderer={
   pathMap:{},
   render(){
     const g=document.getElementById('snakesGroup');g.innerHTML='';this.pathMap={};
+    let defs=document.getElementById('snakeDefs');
+    if(!defs){defs=mksvg('defs',{id:'snakeDefs'});document.getElementById('gameBoard').insertBefore(defs,document.getElementById('gameBoard').firstChild);}
+    defs.innerHTML='';
     Object.entries(Config.SNAKES).forEach(([from,to],idx)=>{
       const pal=Config.SNAKE_COLORS[idx%Config.SNAKE_COLORS.length];
-      const d=this._bezier(Board.center(+from),Board.center(+to),idx%2===0?1:-1);
-      this.pathMap[+from]=d;this._draw(g,Board.center(+from),Board.center(+to),pal,idx,d);
+      const sign=idx%2===0?1:-1;
+      const d=this._bezier(Board.center(+from),Board.center(+to),sign);
+      this.pathMap[+from]=d;
+      // Body gradient: full color at head, fades at tail
+      const gradId=`snakeGrad${idx}`;
+      const grad=mksvg('linearGradient',{id:gradId,gradientUnits:'userSpaceOnUse',
+        x1:Board.center(+from).x,y1:Board.center(+from).y,
+        x2:Board.center(+to).x,y2:Board.center(+to).y});
+      const s1=mksvg('stop',{offset:'0%'});s1.style.stopColor=pal.stroke;s1.style.stopOpacity='1';
+      const s2=mksvg('stop',{offset:'100%'});s2.style.stopColor=pal.stroke;s2.style.stopOpacity='0.35';
+      grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);
+      // Belly gradient (lighter stripe)
+      const bellyId=`snakeBelly${idx}`;
+      const belly=mksvg('linearGradient',{id:bellyId,gradientUnits:'userSpaceOnUse',
+        x1:Board.center(+from).x,y1:Board.center(+from).y,
+        x2:Board.center(+to).x,y2:Board.center(+to).y});
+      const b1=mksvg('stop',{offset:'0%'});b1.style.stopColor='rgba(255,255,255,0.35)';b1.style.stopOpacity='1';
+      const b2=mksvg('stop',{offset:'100%'});b2.style.stopColor='rgba(255,255,255,0.05)';b2.style.stopOpacity='1';
+      belly.appendChild(b1);belly.appendChild(b2);defs.appendChild(belly);
+      this._draw(g,Board.center(+from),Board.center(+to),pal,idx,d,gradId,bellyId);
     });
   },
   _bezier(h,t,sign=1){
     const dx=t.x-h.x,dy=t.y-h.y,len=Math.sqrt(dx*dx+dy*dy);
-    const nx=-dy/len*sign,ny=dx/len*sign,amp=Math.min(48,len*.27);
-    return`M${h.x},${h.y} C${h.x+dx*.3+nx*amp},${h.y+dy*.3+ny*amp},${h.x+dx*.7-nx*amp},${h.y+dy*.7-ny*amp},${t.x},${t.y}`;
+    const nx=-dy/len*sign,ny=dx/len*sign,amp=Math.min(52,len*.3);
+    return`M${h.x},${h.y} C${h.x+dx*.28+nx*amp},${h.y+dy*.28+ny*amp},${h.x+dx*.72-nx*amp},${h.y+dy*.72-ny*amp},${t.x},${t.y}`;
   },
-  _draw(g,head,tail,pal,idx,d){
-    const speed=(5+idx*.6).toFixed(1);const sg=mksvg('g',{});
-    sg.appendChild(mksvg('path',{d,fill:'none',stroke:pal.glow,'stroke-width':'8','stroke-linecap':'round'}));
-    const line=mksvg('path',{d,fill:'none',stroke:pal.stroke,'stroke-width':'2','stroke-linecap':'round','stroke-dasharray':'7 5','stroke-dashoffset':'40'});
-    line.style.animation=`snakeFlow ${speed}s linear infinite`;sg.appendChild(line);
-    // Tail
-    sg.appendChild(mksvg('circle',{cx:tail.x,cy:tail.y,r:'2.5',fill:pal.stroke,opacity:'.35'}));
-    // Head
-    sg.appendChild(mksvg('circle',{cx:head.x,cy:head.y,r:'6.5',fill:pal.stroke}));
+  _pt(p0,p1,p2,p3,t){
+    const u=1-t;
+    return{x:u*u*u*p0.x+3*u*u*t*p1.x+3*u*t*t*p2.x+t*t*t*p3.x,
+           y:u*u*u*p0.y+3*u*u*t*p1.y+3*u*t*t*p2.y+t*t*t*p3.y};
+  },
+  _tan(p0,p1,p2,p3,t){
+    const u=1-t;
+    const dx=3*(u*u*(p1.x-p0.x)+2*u*t*(p2.x-p1.x)+t*t*(p3.x-p2.x));
+    const dy=3*(u*u*(p1.y-p0.y)+2*u*t*(p2.y-p1.y)+t*t*(p3.y-p2.y));
+    const len=Math.sqrt(dx*dx+dy*dy)||1;
+    return{x:dx/len,y:dy/len};
+  },
+  // Tapered ribbon as filled polygon
+  _bodyPath(p0,p1,p2,p3){
+    const N=48;
+    const wHead=6, wTail=0.5;
+    const left=[],right=[];
+    for(let i=0;i<=N;i++){
+      const t=i/N;
+      const pt=this._pt(p0,p1,p2,p3,t);
+      const tn=this._tan(p0,p1,p2,p3,t);
+      const ease=1-Math.pow(t,1.6);
+      const w=wTail+(wHead-wTail)*ease;
+      const nx=-tn.y, ny=tn.x;
+      left.push({x:pt.x+nx*w, y:pt.y+ny*w});
+      right.push({x:pt.x-nx*w, y:pt.y-ny*w});
+    }
+    let d=`M${left[0].x.toFixed(2)},${left[0].y.toFixed(2)}`;
+    for(let i=1;i<=N;i++) d+=` L${left[i].x.toFixed(2)},${left[i].y.toFixed(2)}`;
+    for(let i=N;i>=0;i--) d+=` L${right[i].x.toFixed(2)},${right[i].y.toFixed(2)}`;
+    return d+' Z';
+  },
+  // Belly stripe (narrower inner ribbon)
+  _bellyPath(p0,p1,p2,p3){
+    const N=48;
+    const wHead=2.8, wTail=0.2;
+    const left=[],right=[];
+    for(let i=0;i<=N;i++){
+      const t=i/N;
+      const pt=this._pt(p0,p1,p2,p3,t);
+      const tn=this._tan(p0,p1,p2,p3,t);
+      const ease=1-Math.pow(t,1.6);
+      const w=wTail+(wHead-wTail)*ease;
+      const nx=-tn.y, ny=tn.x;
+      left.push({x:pt.x+nx*w, y:pt.y+ny*w});
+      right.push({x:pt.x-nx*w, y:pt.y-ny*w});
+    }
+    let d=`M${left[0].x.toFixed(2)},${left[0].y.toFixed(2)}`;
+    for(let i=1;i<=N;i++) d+=` L${left[i].x.toFixed(2)},${left[i].y.toFixed(2)}`;
+    for(let i=N;i>=0;i--) d+=` L${right[i].x.toFixed(2)},${right[i].y.toFixed(2)}`;
+    return d+' Z';
+  },
+  _draw(g,head,tail,pal,idx,d,gradId,bellyId){
+    const speed=(5+idx*.6).toFixed(1);
+    const sg=mksvg('g',{'class':'snake-group'});
+
+    const m=d.match(/M([\d.]+),([\d.]+) C([\d.]+),([\d.]+),([\d.]+),([\d.]+),([\d.]+),([\d.]+)/);
+    const p0={x:+m[1],y:+m[2]},p1={x:+m[3],y:+m[4]},p2={x:+m[5],y:+m[6]},p3={x:+m[7],y:+m[8]};
+
+    const tang0=this._tan(p0,p1,p2,p3,0.01);
+    const HOOD_BACK=9;
+    const bodyStart={x:head.x+tang0.x*HOOD_BACK, y:head.y+tang0.y*HOOD_BACK};
+
+    const shift={x:bodyStart.x-p0.x, y:bodyStart.y-p0.y};
+    const bp0=bodyStart;
+    const bp1={x:p1.x+shift.x*0.5, y:p1.y+shift.y*0.5};
+    const bp2=p2, bp3=p3;
+
+    // ── Soft glow halo (full original path for visual continuity)
+    sg.appendChild(mksvg('path',{d,fill:'none',stroke:pal.glow,'stroke-width':'16','stroke-linecap':'round'}));
+
+    // ── Main tapered body (starts from back of head)
+    const bodyD=this._bodyPath(bp0,bp1,bp2,bp3);
+    sg.appendChild(mksvg('path',{d:bodyD,fill:`url(#${gradId})`,stroke:'none'}));
+
+    // ── Scale segments along body
+    const NS=18;
+    for(let i=1;i<NS;i++){
+      const t=i/NS;
+      const pt=this._pt(bp0,bp1,bp2,bp3,t);
+      const tn=this._tan(bp0,bp1,bp2,bp3,t);
+      const ease=1-Math.pow(t,1.6);
+      const hw=(6*ease+0.4)*0.55;
+      const nx=-tn.y, ny=tn.x;
+      const opacity=(0.18+ease*0.12).toFixed(2);
+      sg.appendChild(mksvg('line',{
+        x1:(pt.x+nx*hw).toFixed(2),y1:(pt.y+ny*hw).toFixed(2),
+        x2:(pt.x-nx*hw).toFixed(2),y2:(pt.y-ny*hw).toFixed(2),
+        stroke:'rgba(0,0,0,'+opacity+')','stroke-width':'0.7','stroke-linecap':'round'
+      }));
+    }
+
+    // ── Belly stripe
+    const bellyD=this._bellyPath(bp0,bp1,bp2,bp3);
+    sg.appendChild(mksvg('path',{d:bellyD,fill:`url(#${bellyId})`,stroke:'none'}));
+
+    // ── Head group — cobra style
+    const tang=this._tan(p0,p1,p2,p3,0.01);
+    const angle=Math.atan2(tang.y,tang.x)*180/Math.PI+180;
+    const hg=mksvg('g',{transform:`translate(${head.x},${head.y}) rotate(${angle})`});
+
+    // Darken color for hood shadow/depth
+    const darken='rgba(0,0,0,0.22)';
+
+    const tg=mksvg('g',{transform:'translate(14,4)'});
+    tg.appendChild(mksvg('line',{x1:'0',y1:'0',x2:'7',y2:'0.5',stroke:'#ff2244','stroke-width':'1.6','stroke-linecap':'round'}));
+    tg.appendChild(mksvg('line',{x1:'7',y1:'0.5',x2:'11',y2:'-2.2',stroke:'#ff2244','stroke-width':'1.2','stroke-linecap':'round'}));
+    tg.appendChild(mksvg('line',{x1:'7',y1:'0.5',x2:'11',y2:'3.8',stroke:'#ff2244','stroke-width':'1.2','stroke-linecap':'round'}));
+    tg.style.animation=`tongueFlick ${(1.8+idx*0.35).toFixed(1)}s ease-in-out infinite`;
+    tg.style.transformOrigin='0px 0px';
+    hg.appendChild(tg);
+
+    const hoodColor=pal.stroke;
+    // Hood shadow for depth
+    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'13',fill:darken,opacity:'0.5'}));
+    // Hood main shape
+    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'12',fill:hoodColor}));
+    // Hood pattern: two darker ovals for the classic cobra hood markings
+    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'-5',rx:'4',ry:'3',fill:'rgba(0,0,0,0.15)'}));
+    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'5', rx:'4',ry:'3',fill:'rgba(0,0,0,0.15)'}));
+    // Hood inner lighter center stripe
+    hg.appendChild(mksvg('ellipse',{cx:'-1',cy:'0',rx:'4',ry:'7',fill:'rgba(255,255,255,0.10)'}));
+
+    // ── Head proper — rounder, slightly narrower than hood, sits in front
+    hg.appendChild(mksvg('ellipse',{cx:'4',cy:'0',rx:'10',ry:'7',fill:hoodColor}));
+    // Head top highlight
+    hg.appendChild(mksvg('ellipse',{cx:'2',cy:'-2.5',rx:'6',ry:'3',fill:'rgba(255,255,255,0.18)'}));
+    // Snout rounded tip
+    hg.appendChild(mksvg('ellipse',{cx:'12',cy:'0',rx:'4',ry:'3.5',fill:hoodColor}));
+
+    // ── Eyes — large, expressive, on the sides of the head
+    const eyeR=mksvg('g',{transform:'translate(5,-6)'});
+    eyeR.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'0.95'}));
+    eyeR.appendChild(mksvg('circle',{cx:'0.6',cy:'0.3',r:'2',fill:'#111'}));
+    eyeR.appendChild(mksvg('circle',{cx:'1.1',cy:'-0.6',r:'0.7',fill:'rgba(255,255,255,0.85)'}));
+    hg.appendChild(eyeR);
+
+    const eyeL=mksvg('g',{transform:'translate(5,6)'});
+    eyeL.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'0.95'}));
+    eyeL.appendChild(mksvg('circle',{cx:'0.6',cy:'-0.3',r:'2',fill:'#111'}));
+    eyeL.appendChild(mksvg('circle',{cx:'1.1',cy:'-0.8',r:'0.7',fill:'rgba(255,255,255,0.85)'}));
+    hg.appendChild(eyeL);
+
+    // ── Nostrils near snout tip
+    hg.appendChild(mksvg('circle',{cx:'13',cy:'-1.8',r:'1',fill:'rgba(0,0,0,0.25)'}));
+    hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,0.25)'}));
+
+    sg.appendChild(hg);
     g.appendChild(sg);
   }
 };
+
+if(!document.getElementById('snakeExtraStyles')){
+  const st=document.createElement('style');st.id='snakeExtraStyles';
+  st.textContent=`@keyframes tongueFlick{0%,38%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(0.15);opacity:0.2}62%{transform:scaleX(1);opacity:1}}`;
+  document.head.appendChild(st);
+}
 
 /* ── LADDERS ────────────────────────────────────────────────────────────── */
 const LadderRenderer={
@@ -1281,15 +1560,59 @@ const LadderRenderer={
   },
   _draw(g,base,top){
     const dx=top.x-base.x,dy=top.y-base.y,len=Math.sqrt(dx*dx+dy*dy);
-    const px=-dy/len,py=dx/len,hw=5.5;const lg=mksvg('g',{});
-    lg.appendChild(mksvg('line',{x1:base.x,y1:base.y,x2:top.x,y2:top.y,stroke:'rgba(200,168,75,.055)','stroke-width':'18','stroke-linecap':'round'}));
-    [hw,-hw].forEach(side=>{
-      lg.appendChild(mksvg('line',{x1:base.x+px*side,y1:base.y+py*side,x2:top.x+px*side,y2:top.y+py*side,stroke:'rgba(200,168,75,.18)','stroke-width':'0.6','stroke-linecap':'butt'}));
-      lg.appendChild(mksvg('line',{x1:base.x+px*side,y1:base.y+py*side,x2:top.x+px*side,y2:top.y+py*side,stroke:'#7d6422','stroke-width':'1.8','stroke-linecap':'round'}));
+    const ux=dx/len,uy=dy/len;   // unit along ladder
+    const nx=-uy,ny=ux;          // unit perpendicular
+    const hw=8;                   // half-width between rails
+    const lg=mksvg('g',{});
+
+    // ── Soft glow behind whole ladder
+    lg.appendChild(mksvg('line',{
+      x1:base.x,y1:base.y,x2:top.x,y2:top.y,
+      stroke:'rgba(200,168,75,0.07)','stroke-width':'20','stroke-linecap':'round'
+    }));
+
+    const railColor='#c8943a';
+    const railHighlight='rgba(255,210,120,0.55)';
+    const rungColor='#e8b84b';
+    const rungHighlight='rgba(255,235,160,0.6)';
+
+    // ── Two rails
+    [-hw, hw].forEach(side=>{
+      const x1=base.x+nx*side, y1=base.y+ny*side;
+      const x2=top.x+nx*side,  y2=top.y+ny*side;
+      // Rail shadow
+      lg.appendChild(mksvg('line',{x1,y1,x2,y2,
+        stroke:'rgba(0,0,0,0.18)','stroke-width':'4.5','stroke-linecap':'round'}));
+      // Rail body
+      lg.appendChild(mksvg('line',{x1,y1,x2,y2,
+        stroke:railColor,'stroke-width':'3.2','stroke-linecap':'round'}));
+      // Rail shine stripe
+      lg.appendChild(mksvg('line',{x1:x1-ny*0.6,y1:y1+nx*0.6,x2:x2-ny*0.6,y2:y2+nx*0.6,
+        stroke:railHighlight,'stroke-width':'1','stroke-linecap':'round'}));
     });
-    const n=Math.max(3,Math.floor(len/17));
-    for(let i=1;i<n;i++){const t=i/n,rx=base.x+(top.x-base.x)*t,ry=base.y+(top.y-base.y)*t;
-      lg.appendChild(mksvg('line',{x1:rx+px*(hw+1.2),y1:ry+py*(hw+1.2),x2:rx-px*(hw+1.2),y2:ry-py*(hw+1.2),stroke:'rgba(180,138,42,.65)','stroke-width':'1.3','stroke-linecap':'round'}));}
+
+    // ── Rungs
+    const n=Math.max(2,Math.floor(len/16));
+    for(let i=1;i<n;i++){
+      const t=i/n;
+      const rx=base.x+dx*t, ry=base.y+dy*t;
+      const x1=rx+nx*(hw+1), y1=ry+ny*(hw+1);
+      const x2=rx-nx*(hw+1), y2=ry-ny*(hw+1);
+      // Rung shadow
+      lg.appendChild(mksvg('line',{x1,y1,x2,y2,
+        stroke:'rgba(0,0,0,0.15)','stroke-width':'3.5','stroke-linecap':'round'}));
+      // Rung body
+      lg.appendChild(mksvg('line',{x1,y1,x2,y2,
+        stroke:rungColor,'stroke-width':'2.5','stroke-linecap':'round'}));
+      // Rung highlight
+      lg.appendChild(mksvg('line',{
+        x1:x1-ny*0.4,y1:y1+nx*0.4,x2:x2-ny*0.4,y2:y2+nx*0.4,
+        stroke:rungHighlight,'stroke-width':'0.9','stroke-linecap':'round'}));
+      // Little round knobs at rung ends where they meet the rails
+      lg.appendChild(mksvg('circle',{cx:x1,cy:y1,r:'2',fill:rungColor}));
+      lg.appendChild(mksvg('circle',{cx:x2,cy:y2,r:'2',fill:rungColor}));
+    }
+
     g.appendChild(lg);
   }
 };
@@ -1493,6 +1816,7 @@ const UI={
     document.getElementById('statusMsg').textContent=m;
     const lbl=`Roll dice — ${m}`;
     ['rollBtn','mobileRollBtn'].forEach(id=>{const b=document.getElementById(id);if(b)b.setAttribute('aria-label',lbl);});
+    const ss=document.getElementById('sheetStatus');if(ss)ss.textContent=m;
   },
   setRoll(en){
     ['rollBtn','mobileRollBtn'].forEach(id=>{
@@ -1509,6 +1833,10 @@ const UI={
         b.textContent='Roll';
       }
     });
+    // sync sheet roll button
+    const rb=document.getElementById('rollBtn');
+    const sb=document.getElementById('sheetRollBtn');
+    if(rb&&sb){sb.disabled=rb.disabled;sb.textContent=rb.textContent||'Roll';sb.style.display=rb.style.display||'';}
   },
   updateActive(){
     State.players.forEach((_,i)=>{const c=document.getElementById(`playerCard${i}`);if(c)c.classList.toggle('active',i===State.cur);});
@@ -1519,12 +1847,13 @@ const UI={
     const el=document.getElementById(`pos${pi}`);if(el)el.textContent=`Tile ${t}`;
     const prog=document.getElementById(`prog${pi}`);if(prog)prog.style.width=Math.max(1,((t-1)/99)*100)+'%';
   },
-  updateStats(pi){const s=State.stats[pi],el=document.getElementById(`stats${pi}`);if(el)el.textContent=`${s.r}r · ${s.s}🐍 · ${s.l}🪜`;},
+  updateStats(pi){const s=State.stats[pi],el=document.getElementById(`stats${pi}`);if(el)el.textContent=`${s.r}r · ${s.s}S · ${s.l}L`;},
   setAIThinking(on){document.getElementById('aiThinking').classList.toggle('visible',on);},
   addLog(m,type='event'){
     const log=document.getElementById('logList');
     const e=document.createElement('div');e.className=`log-entry ${type}`;e.textContent=m;
     log.prepend(e);while(log.children.length>50)log.lastChild.remove();log.scrollTop=0;
+    if(typeof Sheet!=='undefined')Sheet.render();
   },
   clearLog(){document.getElementById('logList').innerHTML='';},
   showWin(pi){
@@ -1545,7 +1874,7 @@ const UI={
         return`<div class="win-player-row">
           <div class="win-player-shape" style="color:${pl.color}">${SHAPES[i]}</div>
           <span class="win-player-name" style="${isWin?'color:'+pl.color+';font-weight:500':''}">${pl.name}${isWin?' ★':''}</span>
-          <span class="win-player-stats">T${State.pos[i]} · ${st.r}r · ${st.l}🪜 · ${st.s}🐍</span>
+          <span class="win-player-stats">T${State.pos[i]} · ${st.r}r · ${st.l}L · ${st.s}S</span>
         </div>`;
       }).join('');
     }
@@ -1665,14 +1994,14 @@ const Game={
 
   // Playback an event — runs full animation on every client
   async playback(evt){
-    if(State.busy&&!MP.active)return; // local only guard
+    if(State.busy&&!MP.active&&!evt._fromExec)return; // local only guard
     State.busy=true;UI.setRoll(false);
     const{pi,roll,from,target,finalPos,bounce,noMove,snakeHit,ladderHit,won,bonus,nextPi,nextTurnNum}=evt;
     const p=State.players[pi];
     const isMyRoll=MP.active&&pi===MP.myIndex;
 
-    // Dice animation: others animate, roller already saw it
-    if(!isMyRoll){await Dice.roll(roll);Sound.roll();Anim.rollFlash();}
+    // Dice animation: in MP, non-rollers animate; in local, exec already animated so skip
+    if(!isMyRoll&&!evt._fromExec){await Dice.roll(roll);Sound.roll();Anim.rollFlash();}
     vibrate(18);
     State.stats[pi].r++;UI.updateStats(pi);
     UI.addLog(`${p.name} rolled ${roll}`,p.logClass);
@@ -1692,17 +2021,17 @@ const Game={
       Board.showTarget(target,p.color);await wait(State.fast?80:300);Board.clearTarget();
       await Anim.steps(pi,from,target);State.pos[pi]=target;
       if(snakeHit){
-        UI.setStatus(`🐍 Snake! ${p.name}: ${snakeHit.from} → ${snakeHit.to}`);
+        UI.setStatus(`Snake! ${p.name}: ${snakeHit.from} → ${snakeHit.to}`);
         State.pos[pi]=snakeHit.to;Sound.snake();vibrate([80,40,80]);
         await Anim.snakeSlide(pi,snakeHit.from,snakeHit.to);
         State.stats[pi].s++;UI.updateStats(pi);
-        UI.addLog(`🐍 Snake! ${p.name}: ${snakeHit.from}→${snakeHit.to}`,'event');
+        UI.addLog(`Snake! ${p.name}: ${snakeHit.from}→${snakeHit.to}`,'event');
       } else if(ladderHit){
-        UI.setStatus(`🪜 Ladder! ${p.name}: ${ladderHit.from} → ${ladderHit.to}`);
+        UI.setStatus(`Ladder! ${p.name}: ${ladderHit.from} → ${ladderHit.to}`);
         State.pos[pi]=ladderHit.to;Sound.ladder();vibrate([30,20,60]);
         await Anim.ladderClimb(pi,ladderHit.from,ladderHit.to);
         State.stats[pi].l++;UI.updateStats(pi);
-        UI.addLog(`🪜 Ladder! ${p.name}: ${ladderHit.from}→${ladderHit.to}`,'event');
+        UI.addLog(`Ladder! ${p.name}: ${ladderHit.from}→${ladderHit.to}`,'event');
       }
       State.pos[pi]=finalPos;UI.posDisplay(pi,finalPos);
     }
@@ -1712,7 +2041,7 @@ const Game={
     if(won){
       State.over=true;State.busy=false;Tokens._updateGlow();Tokens._updateStackBadges();
       document.getElementById('uiGroup').innerHTML='';
-      UI.setStatus(`🏆 ${p.name} wins!`);UI.addLog(`🏆 ${p.name} wins!`,'win');
+      UI.setStatus(`${p.name} wins!`);UI.addLog(`${p.name} wins!`,'win');
       Timer.stop();
       if(MP.active&&!evt._replay)MP.pushWin(pi);
       await wait(400);UI.showWin(pi);
@@ -1758,7 +2087,7 @@ const Game={
     const roll=await Dice.roll();Sound.roll();Anim.rollFlash();vibrate(18);
     const from=State.pos[pi];
     const evt=this._buildEvent(pi,roll,from);
-    await this.playback(evt);
+    await this.playback({...evt,_fromExec:true});
   }
 };
 
@@ -1814,9 +2143,7 @@ const Timer={
   }
 };
 
-/* ══════════════════════════════════════════════════════════════════════
-   REACTIONS
-══════════════════════════════════════════════════════════════════════ */
+/* REACTIONS */
 const Reactions={
   _ref:null,_joinTs:0,
   subscribe(code,joinTs){
@@ -1832,7 +2159,8 @@ const Reactions={
   _show(key,color){
     const svgStr=REACT_SVG_MAP[key]||REACT_SVG_MAP['burst'];
     const el=document.createElement('div');el.className='reaction-popup';
-    el.style.color=color||'var(--text)';
+    el.dataset.reaction=key;
+    el.style.color=color||'';
     el.innerHTML=svgStr;
     const bw=document.getElementById('boardWrap');
     if(!bw)return;
@@ -1844,9 +2172,7 @@ const Reactions={
   }
 };
 
-/* ══════════════════════════════════════════════════════════════════════
-   BROWSER NOTIFICATIONS
-══════════════════════════════════════════════════════════════════════ */
+/* BROWSER NOTIFICATIONS */
 const Notifications={
   _enabled:false,
   async toggle(){
@@ -1871,9 +2197,7 @@ const Notifications={
   }
 };
 
-/* ══════════════════════════════════════════════════════════════════════
-   REPLAY
-══════════════════════════════════════════════════════════════════════ */
+/* REPLAY*/
 const Replay={
   _events:[],
   store(evt){this._events.push(evt);},
@@ -1890,9 +2214,9 @@ const Replay={
       const div=document.createElement('div');
       let cls='replay-event';let txt='';
       if(evt.timerExpired){txt=`⏱ ${p.name} timed out`;cls+=' r-skip';}
-      else if(evt.won){txt=`🏆 ${p.name} wins!`;cls+=' r-win';}
-      else if(evt.snakeHit){txt=`🐍 ${p.name} rolled ${evt.roll}: ${evt.snakeHit.from}→${evt.snakeHit.to}`;cls+=' r-snake';}
-      else if(evt.ladderHit){txt=`🪜 ${p.name} rolled ${evt.roll}: ${evt.ladderHit.from}→${evt.ladderHit.to}`;cls+=' r-ladder';}
+      else if(evt.won){txt=`${p.name} wins!`;cls+=' r-win';}
+      else if(evt.snakeHit){txt=`${p.name} rolled ${evt.roll}: ${evt.snakeHit.from}→${evt.snakeHit.to}`;cls+=' r-snake';}
+      else if(evt.ladderHit){txt=`${p.name} rolled ${evt.roll}: ${evt.ladderHit.from}→${evt.ladderHit.to}`;cls+=' r-ladder';}
       else if(evt.noMove){txt=`${p.name} rolled ${evt.roll}: no move`;}
       else{txt=`${p.name} rolled ${evt.roll}: ${evt.from}→${evt.finalPos}`;}
       div.className=cls;
@@ -1934,9 +2258,7 @@ const Replay={
     else{const itm=MP.active&&MP.myIndex===State.cur;UI.setRoll(itm||!MP.active);UI.setStatus(itm?'Your turn — roll!':'Replay complete.');}
   }
 };
-/* ══════════════════════════════════════════════════════════════════════
-   MULTIPLAYER (MP)
-══════════════════════════════════════════════════════════════════════ */
+/* MULTIPLAYER (MP */
 const MP={
   db:null,roomCode:null,myIndex:-1,active:false,isHost:false,
   _rematchTs:0,_roomRef:null,_eventsRef:null,_chatRef:null,_typingRef:null,_winsRef:null,
@@ -1966,7 +2288,6 @@ const MP={
     };
     await firebase.database().ref(`rooms/${code}`).set(roomData);
     firebase.database().ref(`rooms/${code}/players/0/connected`).onDisconnect().set(false);
-    // Register as public room if flagged
     if(isPublic){
       firebase.database().ref(`publicRooms/${code}`).set({
         hostName:name,playerCount,current:1,created:Date.now()
@@ -1986,7 +2307,6 @@ const MP={
     if(!asSpectator){
       const players=data.players||{};
       const taken=new Set(Object.keys(players).map(Number));
-      // Check for reconnect: find our own disconnected slot by name match
       let reconnSlot=-1;
       for(const[idx,pd] of Object.entries(players)){
         if(!pd.connected&&pd.name===name){reconnSlot=+idx;break;}
@@ -2299,9 +2619,7 @@ const MP={
     Lobby.show();
   }
 };
-/* ══════════════════════════════════════════════════════════════════════
-   LOBBY
-══════════════════════════════════════════════════════════════════════ */
+/* LOBBY */
 const AVATARS=null;// removed — using color dots
 
 const Lobby={
@@ -2682,6 +3000,7 @@ const Lobby={
     document.getElementById('spectatorNotice').style.display=slot<0?'block':'none';
     document.getElementById('reactionsBar').classList.toggle('visible',slot>=0);
     document.getElementById('notifBtn').style.display='inline-flex';
+    const sct=document.getElementById('sheetChatTab');if(sct)sct.style.display='';
     // Show game
     document.getElementById('lobbyOverlay').style.display='none';
     document.getElementById('appRoot').style.display='block';
@@ -2730,6 +3049,58 @@ const Lobby={
     Game.init();
   }
 };
+/* ── MOBILE SHEET ───────────────────────────────────────────────────────── */
+const Sheet={
+  _tab:'log',
+  isMobile(){return window.innerWidth<=720},
+  sync(){
+    if(!this.isMobile())return;
+    // Sync status
+    const sm=document.getElementById('statusMsg');
+    const ss=document.getElementById('sheetStatus');
+    if(sm&&ss)ss.textContent=sm.textContent;
+    // Sync roll button state
+    const rb=document.getElementById('rollBtn');
+    const sb=document.getElementById('sheetRollBtn');
+    if(rb&&sb){sb.disabled=rb.disabled;sb.textContent=rb.textContent||'Roll';}
+    this.render();
+  },
+  show(tab){
+    this._tab=tab;
+    document.querySelectorAll('.sheet-tab').forEach(b=>b.classList.toggle('active',b.textContent.toLowerCase()===tab||(tab==='log'&&b.textContent==='Log')||(tab==='stats'&&b.textContent==='Players')||(tab==='chat'&&b.textContent==='Chat')));
+    this.render();
+  },
+  render(){
+    if(!this.isMobile())return;
+    const body=document.getElementById('sheetBody');
+    if(!body)return;
+    body.innerHTML='';
+    if(this._tab==='log'){
+      const src=document.getElementById('logList');
+      if(src){const clone=src.cloneNode(true);clone.style.maxHeight='none';body.appendChild(clone);}
+    } else if(this._tab==='stats'){
+      State.players.slice(0,State.numPlayers).forEach((p,i)=>{
+        const row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)';
+        const active=i===State.cur;
+        row.innerHTML=`<div style="width:3px;height:28px;border-radius:2px;background:${p.color};flex-shrink:0"></div>`+
+          `<div style="flex:1;min-width:0"><div style="font-size:.68rem;color:${active?'var(--text)':'var(--muted)'};text-transform:uppercase;letter-spacing:.08em">${p.name}</div>`+
+          `<div style="font-size:.62rem;color:var(--muted);margin-top:2px">Tile ${State.pos[i]} · ${State.stats[i]?.rolls||0} rolls</div></div>`+
+          `${active?'<div style="font-size:.52rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase">Your turn</div>':''}`;
+        body.appendChild(row);
+      });
+    } else if(this._tab==='chat'){
+      const src=document.getElementById('chatMessages');
+      if(src){const clone=src.cloneNode(true);clone.style.maxHeight='none';body.appendChild(clone);}
+      const inputRow=document.createElement('div');
+      inputRow.style.cssText='display:flex;gap:6px;margin-top:8px';
+      inputRow.innerHTML=`<input class="chat-input" id="sheetChatInput" placeholder="Message…" maxlength="120" autocomplete="off" style="flex:1"/>`+
+        `<button class="chat-send" onclick="MP.sendChat(document.getElementById('sheetChatInput').value);document.getElementById('sheetChatInput').value=''">↑</button>`;
+      body.appendChild(inputRow);
+    }
+  }
+};
+
 /* ── BOOT ───────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',()=>{
   MP.initFirebase();
