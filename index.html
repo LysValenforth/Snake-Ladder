@@ -4,7 +4,6 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>Serpents &amp; Ladders — Multiplayer</title>
-<!-- Firebase 10 Realtime Database — compat SDK (no bundler needed) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
@@ -273,6 +272,11 @@ body.light .lobby-btn{color:#f0ece4}
 .lobby-error{font-size:.58rem;color:#d94f4f;text-align:center;padding:6px 0}
 .no-firebase-note{font-size:.57rem;color:var(--muted);line-height:1.7;padding:10px 12px;border:1px solid var(--border);border-radius:4px;background:var(--surface)}
 .no-firebase-note strong{color:var(--gold)}
+.lobby-rules-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.lobby-rules-row:last-child{border-bottom:none}
+body.light .lobby-rules-row{border-bottom-color:rgba(0,0,0,.04)}
+.lobby-rules-label{font-size:.62rem;color:var(--text)}
+.lobby-rules-desc{font-size:.54rem;color:var(--muted);margin-top:2px;line-height:1.4}
 
 /* ONLINE HEADER ────────────────────────────────────────────── */
 .online-badge{display:none;padding:3px 9px;background:rgba(92,246,176,.1);border:1px solid rgba(92,246,176,.2);border-radius:3px;font-size:.54rem;letter-spacing:.22em;color:#5cf6b0;text-transform:uppercase;align-items:center;gap:5px}
@@ -326,11 +330,22 @@ body.light .lobby-btn{color:#f0ece4}
     <div class="lobby-section" id="onlineSection">
       <div class="lobby-section-title">Online Play</div>
       <div id="createSection">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
           <label class="lobby-label" style="margin:0;white-space:nowrap">Players</label>
           <div class="lobby-seg" id="playerCountSeg">
             <button class="lobby-seg-btn active" data-count="2">2P</button>
             <button class="lobby-seg-btn" data-count="4">4P</button>
+          </div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="lobby-section-title">Room Rules</div>
+          <div class="lobby-rules-row">
+            <div><div class="lobby-rules-label">Exact landing</div><div class="lobby-rules-desc">Must land exactly on 100 — overshoot bounces back</div></div>
+            <label class="toggle" id="lobbyExactWinToggle"><input type="checkbox" id="lobbyExactWin"/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+          </div>
+          <div class="lobby-rules-row">
+            <div><div class="lobby-rules-label">Bonus roll on 6</div><div class="lobby-rules-desc">Rolling a 6 grants an extra turn</div></div>
+            <label class="toggle" id="lobbyBonusRollToggle"><input type="checkbox" id="lobbyBonusRoll" checked/><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
           </div>
         </div>
         <button class="lobby-btn" id="createRoomBtn" onclick="Lobby.createRoom()">Create Room</button>
@@ -515,14 +530,12 @@ body.light .lobby-btn{color:#f0ece4}
 <script>
 'use strict';
 
-
 const FIREBASE_CONFIG = {
   apiKey:      'AIzaSyCc-w-9ETuDbi3LTI7g5zFGsdoOfR2Fbx8',                                       
   authDomain:  'snake-and-ladder-854d6.firebaseapp.com',
   databaseURL: 'https://snake-and-ladder-854d6-default-rtdb.asia-southeast1.firebasedatabase.app/', 
   projectId:   'snake-and-ladder-854d6',                                     
 };
-// ═══════════════════════════════════════════════════════════════════════
 
 const NS='http://www.w3.org/2000/svg';
 function mksvg(tag,a={}){const e=document.createElementNS(NS,tag);for(const[k,v]of Object.entries(a))e.setAttribute(k,v);return e;}
@@ -628,14 +641,23 @@ const Settings={
     row.appendChild(tog);return row;
   },
   _rulesTab(body){
+    const locked=MP.active&&!MP.isHost;
     const s=document.createElement('div');s.className='settings-section';
+    if(locked){
+      const note=document.createElement('div');note.style.cssText='font-size:.58rem;color:var(--gold);margin-bottom:10px;line-height:1.55;padding:7px 10px;border:1px solid rgba(200,168,75,.2);border-radius:4px;background:rgba(200,168,75,.06)';
+      note.textContent='⚑ Only the host can change rules.';s.appendChild(note);
+    }
     s.appendChild(Object.assign(document.createElement('div'),{className:'settings-section-title',textContent:'Winning'}));
-    s.appendChild(this._toggle('Exact landing required','Must roll the exact number to reach tile 100. Overshoot bounces back.',Config.exactWin,v=>{Config.exactWin=v;}));
+    const t1=this._toggle('Exact landing required','Must roll the exact number to reach tile 100. Overshoot bounces back.',Config.exactWin,v=>{Config.exactWin=v;MP.pushSettings();});
+    if(locked)t1.style.pointerEvents='none',t1.style.opacity='.45';
+    s.appendChild(t1);
     s.appendChild(Object.assign(document.createElement('div'),{className:'settings-section-title',style:'margin-top:14px',textContent:'Turns'}));
-    s.appendChild(this._toggle('Bonus roll on 6','Rolling a 6 grants an extra turn.',Config.bonusRoll,v=>{Config.bonusRoll=v;}));
+    const t2=this._toggle('Bonus roll on 6','Rolling a 6 grants an extra turn.',Config.bonusRoll,v=>{Config.bonusRoll=v;MP.pushSettings();});
+    if(locked)t2.style.pointerEvents='none',t2.style.opacity='.45';
+    s.appendChild(t2);
     body.appendChild(s);
     const note=document.createElement('div');note.className='settings-note';
-    note.textContent='Rule changes take effect on next restart.';body.appendChild(note);
+    note.textContent=locked?'Ask the host to change rules.':'Rule changes take effect immediately in online play.';body.appendChild(note);
   },
   _playersTab(body){
     const s=document.createElement('div');s.className='settings-section';
@@ -863,11 +885,12 @@ const LadderRenderer={
 const Dice={
   dots:{1:[[40,40]],2:[[23,23],[57,57]],3:[[23,23],[40,40],[57,57]],4:[[23,23],[57,23],[23,57],[57,57]],5:[[23,23],[57,23],[40,40],[23,57],[57,57]],6:[[23,20],[57,20],[23,40],[57,40],[23,60],[57,60]]},
   render(v){const g=document.getElementById('diceDots');g.innerHTML='';(this.dots[v]||[]).forEach(([x,y])=>g.appendChild(mksvg('circle',{cx:x,cy:y,r:'5.5',fill:'#c8a84b'})));},
-  async roll(){
+  async roll(forcedValue=null){
     const el=document.getElementById('diceSVG');el.classList.add('dice-rolling');
     const sched=State.fast?[60,70,80,90,100,120]:[150,165,185,215,255,305,370,450,530];
     for(const ms of sched){this.render(Math.ceil(Math.random()*6));await wait(ms);}
-    el.classList.remove('dice-rolling');const r=Math.ceil(Math.random()*6);this.render(r);
+    el.classList.remove('dice-rolling');
+    const r=forcedValue??Math.ceil(Math.random()*6);this.render(r);
     el.animate([{transform:'scale(1.08)',filter:'brightness(1.3)'},{transform:'scale(.97)',filter:'brightness(1)'},{transform:'scale(1)',filter:'brightness(1)'}],{duration:280,easing:'cubic-bezier(0.25,0.46,0.45,0.94)'});
     return r;
   }
@@ -1178,92 +1201,136 @@ const Game={
   },
   async handleRoll(){
     if(State.busy||State.over)return;
-    if(MP.active){if(MP.myIndex!==State.cur||MP.myIndex<0)return;}
-    else{if(Config.isAI(State.cur))return;}
+    if(MP.active){
+      if(MP.myIndex!==State.cur||MP.myIndex<0)return;
+      // In online mode: roll dice locally for instant feedback, then push event
+      // All clients (including self) will animate the full move via playback
+      State.busy=true;UI.setRoll(false);
+      const roll=await Dice.roll();
+      Sound.roll();Anim.rollFlash();
+      UI.setStatus(`Rolling…`);
+      vibrate(18);
+      // Build complete event with all outcomes pre-computed
+      const pi=State.cur,from=State.pos[pi];
+      const evt=this._buildEvent(pi,roll,from);
+      MP.pushEvent(evt); // all clients (incl. self) will call playback()
+      return;
+    }
+    if(Config.isAI(State.cur))return;
     await this.exec();
   },
-  async exec(){
+
+  // Pre-compute all outcomes for an event so every client gets identical results
+  _buildEvent(pi,roll,from){
+    const p=State.players[pi];
+    let target=from+roll;
+    let finalPos=target;
+    let bounce=false,snakeHit=null,ladderHit=null;
+    let overshoot=false,noMove=false;
+    if(target>100){
+      if(Config.exactWin){bounce=true;finalPos=100-(target-100);target=finalPos;}
+      else{noMove=true;finalPos=from;}
+    } else {
+      if(target in Config.SNAKES){snakeHit={from:target,to:Config.SNAKES[target]};finalPos=snakeHit.to;}
+      else if(target in Config.LADDERS){ladderHit={from:target,to:Config.LADDERS[target]};finalPos=ladderHit.to;}
+    }
+    const won=finalPos===100;
+    const bonus=Config.bonusRoll&&roll===6&&!won&&!noMove;
+    // Compute next player
+    let nextPi=pi,nextTurnNum=State.turnNum;
+    if(!bonus){
+      nextPi=(pi+1)%State.players.length;
+      if(nextPi===0)nextTurnNum=State.turnNum+1;
+    }
+    return{pi,roll,from,target,finalPos,bounce,noMove,
+      snakeHit,ladderHit,won,bonus,nextPi,nextTurnNum,ts:Date.now()};
+  },
+
+  // Playback an event — runs full animation on every client
+  async playback(evt){
+    if(State.busy&&!MP.active)return; // local only guard
     State.busy=true;UI.setRoll(false);
-    const pi=State.cur,p=State.players[pi];
+    const{pi,roll,from,target,finalPos,bounce,noMove,snakeHit,ladderHit,won,bonus,nextPi,nextTurnNum}=evt;
+    const p=State.players[pi];
+    const isMyRoll=MP.active&&pi===MP.myIndex;
+
+    // Dice animation: others animate, roller already saw it
+    if(!isMyRoll){await Dice.roll(roll);Sound.roll();Anim.rollFlash();}
     vibrate(18);
-    const roll=await Dice.roll();
-    Sound.roll();Anim.rollFlash();
     State.stats[pi].r++;UI.updateStats(pi);
     UI.addLog(`${p.name} rolled ${roll}`,p.logClass);
     UI.setStatus(`${p.name} rolled ${roll}.`);
 
-    const cur=State.pos[pi];
-    let target=cur+roll;
-
-    if(target>100){
-      if(Config.exactWin){
-        target=100-(target-100);
-        UI.setStatus(`${p.name} overshoots — bounces to ${target}!`);
-        UI.addLog(`${p.name} bounces to ${target}`,p.logClass);
-        await wait(State.fast?200:500);
-        await Anim.steps(pi,cur,target);
-        State.pos[pi]=target;UI.posDisplay(pi,target);
-      }else{
-        UI.setStatus(`${p.name} needs ${100-cur} — no move.`);
-        UI.addLog(`${p.name} stays (overshoot)`,p.logClass);
-        await wait(State.fast?200:700);
+    if(noMove){
+      UI.setStatus(`${p.name} needs ${100-from} — no move.`);
+      UI.addLog(`${p.name} stays (overshoot)`,p.logClass);
+      await wait(State.fast?200:700);
+    } else if(bounce){
+      UI.setStatus(`${p.name} overshoots — bounces to ${finalPos}!`);
+      UI.addLog(`${p.name} bounces to ${finalPos}`,p.logClass);
+      await wait(State.fast?200:500);
+      await Anim.steps(pi,from,finalPos);
+      State.pos[pi]=finalPos;UI.posDisplay(pi,finalPos);
+    } else {
+      Board.showTarget(target,p.color);await wait(State.fast?80:300);Board.clearTarget();
+      await Anim.steps(pi,from,target);State.pos[pi]=target;
+      if(snakeHit){
+        UI.setStatus(`🐍 Snake! ${p.name}: ${snakeHit.from} → ${snakeHit.to}`);
+        State.pos[pi]=snakeHit.to;Sound.snake();vibrate([80,40,80]);
+        await Anim.snakeSlide(pi,snakeHit.from,snakeHit.to);
+        State.stats[pi].s++;UI.updateStats(pi);
+        UI.addLog(`🐍 Snake! ${p.name}: ${snakeHit.from}→${snakeHit.to}`,'event');
+      } else if(ladderHit){
+        UI.setStatus(`🪜 Ladder! ${p.name}: ${ladderHit.from} → ${ladderHit.to}`);
+        State.pos[pi]=ladderHit.to;Sound.ladder();vibrate([30,20,60]);
+        await Anim.ladderClimb(pi,ladderHit.from,ladderHit.to);
+        State.stats[pi].l++;UI.updateStats(pi);
+        UI.addLog(`🪜 Ladder! ${p.name}: ${ladderHit.from}→${ladderHit.to}`,'event');
       }
-      State.turns++;
-      if(Config.bonusRoll&&roll===6&&!State.over){
-        UI.addLog(`${p.name} rolled 6 — bonus`,p.logClass);UI.setStatus(`${p.name} rolled 6 — roll again!`);
-        State.busy=false;if(MP.active)MP.push();
-        if(Config.isAI(pi))AI.turn();else UI.setRoll(true);return;
-      }
-      State.cur=(State.cur+1)%State.players.length;if(State.cur===0)State.turnNum++;
-      UI.updateActive();State.busy=false;
-      if(MP.active){MP.push();UI.setRoll(MP.myIndex===State.cur);UI.setStatus(MP.myIndex===State.cur?`Your turn — roll!`:`${State.players[State.cur].name}'s turn.`);}
-      else if(Config.isAI(State.cur)){UI.setRoll(false);AI.turn();}
-      else{UI.setRoll(true);UI.setStatus(`${State.players[State.cur].name}'s turn.`);}
-      return;
+      State.pos[pi]=finalPos;UI.posDisplay(pi,finalPos);
     }
 
-    Board.showTarget(target,p.color);await wait(State.fast?80:300);Board.clearTarget();
-    await Anim.steps(pi,cur,target);State.pos[pi]=target;let final=target;
+    State.turns++;
 
-    if(final in Config.SNAKES){
-      const dest=Config.SNAKES[final];
-      UI.setStatus(`🐍 Snake! ${p.name}: ${final} → ${dest}`);State.pos[pi]=dest;
-      Sound.snake();vibrate([80,40,80]);
-      await Anim.snakeSlide(pi,final,dest);
-      final=dest;State.stats[pi].s++;UI.updateStats(pi);
-      UI.addLog(`🐍 Snake! ${p.name}: ${target}→${dest}`,'event');
-    }else if(final in Config.LADDERS){
-      const dest=Config.LADDERS[final];
-      UI.setStatus(`🪜 Ladder! ${p.name}: ${final} → ${dest}`);State.pos[pi]=dest;
-      Sound.ladder();vibrate([30,20,60]);
-      await Anim.ladderClimb(pi,final,dest);
-      final=dest;State.stats[pi].l++;UI.updateStats(pi);
-      UI.addLog(`🪜 Ladder! ${p.name}: ${target}→${dest}`,'event');
-    }
-
-    State.pos[pi]=final;UI.posDisplay(pi,final);
-
-    if(final===100){
+    if(won){
       State.over=true;State.busy=false;Tokens._updateGlow();Tokens._updateStackBadges();
       document.getElementById('uiGroup').innerHTML='';
       UI.setStatus(`🏆 ${p.name} wins!`);UI.addLog(`🏆 ${p.name} wins!`,'win');
-      if(MP.active)MP.push();
       await wait(400);UI.showWin(pi);return;
     }
-    if(final===target)UI.setStatus(`${p.name} is on tile ${final}.`);
 
-    State.turns++;
-    if(Config.bonusRoll&&roll===6&&!State.over){
+    if(bonus){
       UI.addLog(`${p.name} rolled 6 — bonus`,p.logClass);UI.setStatus(`${p.name} rolled 6 — roll again!`);
-      State.busy=false;if(MP.active)MP.push();
-      if(Config.isAI(pi))AI.turn();else UI.setRoll(true);return;
+      State.busy=false;
+      if(MP.active){const itm=MP.myIndex===pi;UI.setRoll(itm);if(!itm)UI.setStatus(`${p.name} rolled 6 — rolling again…`);}
+      else if(Config.isAI(pi)){AI.turn();}
+      else{UI.setRoll(true);}
+      return;
     }
 
-    State.cur=(State.cur+1)%State.players.length;if(State.cur===0)State.turnNum++;
-    UI.updateActive();State.busy=false;
-    if(MP.active){MP.push();UI.setRoll(MP.myIndex===State.cur);UI.setStatus(MP.myIndex===State.cur?`Your turn — roll!`:`${State.players[State.cur].name}'s turn.`);}
-    else if(Config.isAI(State.cur)){UI.setRoll(false);AI.turn();}
-    else{UI.setRoll(true);UI.setStatus(`${State.players[State.cur].name}'s turn.`);}
+    State.cur=nextPi;State.turnNum=nextTurnNum;
+    UI.updateActive();document.getElementById('turnCount').textContent=State.turnNum;
+    State.busy=false;
+
+    if(MP.active){
+      const isMyTurn=MP.myIndex===State.cur&&MP.myIndex>=0;
+      UI.setRoll(isMyTurn);
+      UI.setStatus(isMyTurn?`Your turn — roll!`:`${State.players[State.cur].name}'s turn.`);
+    } else if(Config.isAI(State.cur)){
+      UI.setRoll(false);AI.turn();
+    } else {
+      UI.setRoll(true);UI.setStatus(`${State.players[State.cur].name}'s turn.`);
+    }
+  },
+
+  // Local-only exec (no multiplayer)
+  async exec(){
+    State.busy=true;UI.setRoll(false);
+    const pi=State.cur;
+    const roll=await Dice.roll();Sound.roll();Anim.rollFlash();vibrate(18);
+    const from=State.pos[pi];
+    const evt=this._buildEvent(pi,roll,from);
+    await this.playback(evt);
   }
 };
 
@@ -1273,8 +1340,9 @@ const GameController={handleRoll(){Game.handleRoll();},restart(){Game.restart();
    MULTIPLAYER (MP)
 ══════════════════════════════════════════════════════════════════════ */
 const MP={
-  db:null,roomCode:null,myIndex:-1,active:false,
-  _justPushed:false,_rematchTs:0,_roomRef:null,_chatRef:null,
+  db:null,roomCode:null,myIndex:-1,active:false,isHost:false,
+  _rematchTs:0,_roomRef:null,_eventsRef:null,_chatRef:null,_settingsRef:null,
+  _joinTs:0,
 
   isConfigured(){return FIREBASE_CONFIG.apiKey!=='YOUR_API_KEY'&&!!FIREBASE_CONFIG.databaseURL;},
 
@@ -1286,13 +1354,17 @@ const MP={
 
   makeCode(){return Math.random().toString(36).substring(2,6).toUpperCase();},
 
-  async createRoom(name,colorIndex,playerCount){
+  async createRoom(name,colorIndex,playerCount,settings){
     if(!this.db)return null;
-    const code=this.makeCode();this.roomCode=code;this.myIndex=0;
+    const code=this.makeCode();this.roomCode=code;this.myIndex=0;this.isHost=true;
+    const roomSettings={exactWin:settings.exactWin,bonusRoll:settings.bonusRoll};
     await firebase.database().ref(`rooms/${code}`).set({
       created:Date.now(),playerCount,
-      gameState:{positions:Array(playerCount).fill(1),currentPlayer:0,turnNum:1,stats:Array.from({length:playerCount},()=>({r:0,s:0,l:0})),over:false,winner:null,status:'waiting'},
-      players:{0:{name,colorIndex,connected:true}},chat:{}
+      settings:roomSettings,
+      gameState:{positions:Array(playerCount).fill(1),currentPlayer:0,turnNum:1,
+        stats:Array.from({length:playerCount},()=>({r:0,s:0,l:0})),over:false,winner:null,status:'waiting'},
+      players:{0:{name,colorIndex,connected:true}},
+      events:{},chat:{}
     });
     firebase.database().ref(`rooms/${code}/players/0/connected`).onDisconnect().set(false);
     return code;
@@ -1312,34 +1384,45 @@ const MP={
       if(slot===-1)asSpectator=true;else this.myIndex=slot;
     }
     if(asSpectator)this.myIndex=-1;
-    this.roomCode=code;
+    this.roomCode=code;this.isHost=(!asSpectator&&this.myIndex===0);
     if(!asSpectator){
       await firebase.database().ref(`rooms/${code}/players/${this.myIndex}`).set({name,colorIndex,connected:true});
       firebase.database().ref(`rooms/${code}/players/${this.myIndex}/connected`).onDisconnect().set(false);
     }
-    return{slot:this.myIndex,playerCount:data.playerCount,gameState:data.gameState,players:data.players,code};
+    return{slot:this.myIndex,playerCount:data.playerCount,gameState:data.gameState,
+      players:data.players,settings:data.settings,code};
   },
 
-  push(){
+  // Push a move event — all clients will animate from this
+  pushEvent(evt){
     if(!this.active||!this.db)return;
-    this._justPushed=true;
-    firebase.database().ref(`rooms/${this.roomCode}/gameState`).update({
-      positions:[...State.pos],currentPlayer:State.cur,turnNum:State.turnNum,
-      stats:State.stats.map(s=>({...s})),over:State.over,
-      winner:State.over?State.pos.indexOf(100):null,
-      status:State.over?'finished':'playing',lastUpdate:Date.now()
-    }).catch(()=>{this._justPushed=false;});
+    firebase.database().ref(`rooms/${this.roomCode}/events`).push(evt);
+  },
+
+  // Push settings change (host only)
+  pushSettings(){
+    if(!this.active||!this.db||!this.isHost)return;
+    firebase.database().ref(`rooms/${this.roomCode}/settings`).set({
+      exactWin:Config.exactWin,bonusRoll:Config.bonusRoll
+    });
   },
 
   subscribe(code){
     if(!this.db)return;
+    // Clean up old listeners
     if(this._roomRef)this._roomRef.off();
+    if(this._eventsRef)this._eventsRef.off();
     if(this._chatRef)this._chatRef.off();
+
+    this._joinTs=Date.now();
+
+    // ── Room-level changes (players, rematch, settings) ──────────
     this._roomRef=firebase.database().ref(`rooms/${code}`);
     this._roomRef.on('value',snap=>{
       if(!snap.exists())return;
       const data=snap.val();
-      // Sync names & online dots
+
+      // Sync player names & online dots
       if(data.players){
         Object.entries(data.players).forEach(([idx,pd])=>{
           const i=+idx;if(i!==this.myIndex&&State.players[i])State.players[i].name=pd.name;
@@ -1348,36 +1431,30 @@ const MP={
         });
         State.players.forEach((p,i)=>{if(i!==this.myIndex){const el=document.getElementById(`pname${i}`);if(el)el.textContent=p.name;}});
       }
-      // Skip if we just pushed this update
-      if(this._justPushed){this._justPushed=false;return;}
-      const gs=data.gameState;
-      if(!gs||gs.status==='waiting')return;
-      // Apply remote state
-      const prevPos=[...State.pos];
-      if(gs.positions)State.pos=[...gs.positions];
-      State.cur=gs.currentPlayer??State.cur;
-      State.turnNum=gs.turnNum||State.turnNum;
-      if(gs.stats)State.stats=gs.stats.map(s=>({...s}));
-      State.over=gs.over||false;
-      // Snap tokens that moved
-      State.pos.forEach((pos,i)=>{if(pos!==prevPos[i])Tokens._snap(i,pos);});
-      Tokens._updateGlow();Tokens._updateStackBadges();
-      UI.updateActive();
-      State.players.forEach((_,i)=>{UI.posDisplay(i,State.pos[i]);UI.updateStats(i);});
-      document.getElementById('turnCount').textContent=State.turnNum;
-      if(gs.over&&gs.winner!=null){
-        if(document.getElementById('winOverlay').style.display==='none')UI.showWin(gs.winner);
-      }else if(!gs.over&&!State.busy){
-        const isMyTurn=this.myIndex===State.cur&&this.myIndex>=0;
-        UI.setRoll(isMyTurn);
-        UI.setStatus(isMyTurn?`Your turn — roll!`:`${State.players[State.cur].name}'s turn.`);
+
+      // Apply settings from host
+      if(data.settings&&!this.isHost){
+        Config.exactWin=!!data.settings.exactWin;
+        Config.bonusRoll=data.settings.bonusRoll!==false;
       }
+
       // Rematch signal
       if(data.rematch&&data.rematch.ts!==this._rematchTs){
         this._rematchTs=data.rematch.ts;
-        this._applyRematch(data.rematch.playerCount||State.numPlayers);
+        this._applyRematch(data.rematch.playerCount||State.numPlayers,data.rematch.settings);
       }
     });
+
+    // ── Move events — ALL clients animate from these ─────────────
+    this._eventsRef=firebase.database().ref(`rooms/${code}/events`);
+    this._eventsRef.orderByChild('ts').startAt(this._joinTs).on('child_added',snap=>{
+      const evt=snap.val();if(!evt)return;
+      // Queue events so they don't overlap
+      this._eventQueue.push(evt);
+      this._drainQueue();
+    });
+
+    // ── Chat ─────────────────────────────────────────────────────
     this._chatRef=firebase.database().ref(`rooms/${code}/chat`);
     this._chatRef.on('value',snap=>{
       const msgs=Object.values(snap.val()||{}).sort((a,b)=>a.ts-b.ts);
@@ -1390,6 +1467,18 @@ const MP={
       });
       list.scrollTop=list.scrollHeight;
     });
+  },
+
+  // Serialize event processing so animations don't overlap
+  _eventQueue:[],
+  _processingEvent:false,
+  async _drainQueue(){
+    if(this._processingEvent||this._eventQueue.length===0)return;
+    this._processingEvent=true;
+    const evt=this._eventQueue.shift();
+    await Game.playback(evt);
+    this._processingEvent=false;
+    this._drainQueue();
   },
 
   sendChatInput(){
@@ -1406,18 +1495,33 @@ const MP={
   requestRematch(){
     if(!this.active||!this.db)return;
     const n=State.numPlayers,ts=Date.now();this._rematchTs=ts;
-    this._applyRematch(n);
+    this._applyRematch(n,null);
     firebase.database().ref(`rooms/${this.roomCode}`).update({
-      'gameState':{positions:Array(n).fill(1),currentPlayer:0,turnNum:1,stats:Array.from({length:n},()=>({r:0,s:0,l:0})),over:false,winner:null,status:'playing',lastUpdate:ts},
-      'rematch':{ts,playerCount:n}
+      'gameState':{positions:Array(n).fill(1),currentPlayer:0,turnNum:1,
+        stats:Array.from({length:n},()=>({r:0,s:0,l:0})),over:false,winner:null,status:'playing',lastUpdate:ts},
+      'events':{},
+      'rematch':{ts,playerCount:n,settings:{exactWin:Config.exactWin,bonusRoll:Config.bonusRoll}}
     });
   },
 
-  _applyRematch(playerCount){
+  _applyRematch(playerCount,settings){
     State.numPlayers=playerCount||State.numPlayers;
-    const savedNames=State.players.map(p=>p.name);const savedColors=State.players.map(p=>({color:p.color,text:p.text}));
+    if(settings){Config.exactWin=!!settings.exactWin;Config.bonusRoll=settings.bonusRoll!==false;}
+    const savedNames=State.players.map(p=>p.name);
+    const savedColors=State.players.map(p=>({color:p.color,text:p.text}));
     State.reset();
     State.players.forEach((p,i)=>{if(savedNames[i])p.name=savedNames[i];if(savedColors[i])Object.assign(p,savedColors[i]);});
+    this._eventQueue=[];this._processingEvent=false;
+    // Re-subscribe events from now
+    if(this.db&&this.roomCode){
+      if(this._eventsRef)this._eventsRef.off();
+      this._joinTs=Date.now();
+      this._eventsRef=firebase.database().ref(`rooms/${this.roomCode}/events`);
+      this._eventsRef.orderByChild('ts').startAt(this._joinTs).on('child_added',snap=>{
+        const evt=snap.val();if(!evt)return;
+        this._eventQueue.push(evt);this._drainQueue();
+      });
+    }
     UI.hideWin();Game._build();UI.clearLog();
     document.getElementById('turnCount').textContent='1';
     const isMyTurn=this.myIndex===0;
@@ -1428,8 +1532,11 @@ const MP={
   leave(){
     if(this.db&&this.roomCode&&this.myIndex>=0)
       firebase.database().ref(`rooms/${this.roomCode}/players/${this.myIndex}/connected`).set(false);
-    if(this._roomRef)this._roomRef.off();if(this._chatRef)this._chatRef.off();
-    this.active=false;this.myIndex=-1;this.roomCode=null;
+    if(this._roomRef)this._roomRef.off();
+    if(this._eventsRef)this._eventsRef.off();
+    if(this._chatRef)this._chatRef.off();
+    this.active=false;this.myIndex=-1;this.roomCode=null;this.isHost=false;
+    this._eventQueue=[];this._processingEvent=false;
     document.getElementById('modeToggle').style.display='';
     document.getElementById('onlineBadge').style.display='none';
     document.getElementById('roomCodePill').style.display='none';
@@ -1504,9 +1611,15 @@ const Lobby={
   async createRoom(){
     if(!MP.isConfigured())return;
     const{name,colorIndex}=this._form();
+    const settings={
+      exactWin:document.getElementById('lobbyExactWin').checked,
+      bonusRoll:document.getElementById('lobbyBonusRoll').checked
+    };
     const btn=document.getElementById('createRoomBtn');btn.textContent='Creating…';btn.disabled=true;
-    const code=await MP.createRoom(name,colorIndex,this._selectedCount);
+    const code=await MP.createRoom(name,colorIndex,this._selectedCount,settings);
     if(!code){btn.textContent='Create Room';btn.disabled=false;this._setError('Failed to create room. Check your Firebase config.');return;}
+    // Apply settings locally for host
+    Config.exactWin=settings.exactWin;Config.bonusRoll=settings.bonusRoll;
     document.getElementById('createSection').style.display='none';
     document.getElementById('joinSection').style.display='none';
     document.getElementById('roomCodeText').textContent=code;
@@ -1536,7 +1649,7 @@ const Lobby={
     firebase.database().ref(`rooms/${MP.roomCode}`).get().then(snap=>{
       const data=snap.val()||{};
       firebase.database().ref(`rooms/${MP.roomCode}/gameState/status`).set('playing');
-      this._enterGame({slot:0,playerCount:data.playerCount||2,gameState:data.gameState,players:data.players});
+      this._enterGame({slot:0,playerCount:data.playerCount||2,gameState:data.gameState,players:data.players,settings:data.settings});
     });
   },
 
@@ -1553,9 +1666,14 @@ const Lobby={
     this._enterGame(result);
   },
 
-  _enterGame({slot,playerCount,gameState,players}){
+  _enterGame({slot,playerCount,gameState,players,settings}){
     MP.active=true;
     State.numPlayers=playerCount||2;
+    // Apply room settings (non-hosts get them here; host already applied them)
+    if(settings&&!MP.isHost){
+      Config.exactWin=!!settings.exactWin;
+      Config.bonusRoll=settings.bonusRoll!==false;
+    }
     State.reset();
     // Apply room player data
     if(players){
