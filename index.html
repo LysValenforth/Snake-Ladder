@@ -309,10 +309,14 @@ body.light .sheet-roll-btn{color:#f0ece4}
   .app{padding:4px 4px 0}
   html,body{height:100%;overflow:hidden}
 
+  /* appRoot fills full viewport; padding-bottom keeps content above the
+     fixed bottom sheet — value set by JS via --sheet-h                   */
   #appRoot{
     display:flex;flex-direction:column;
     height:100vh;height:100dvh;
-    padding-bottom:0;overflow:hidden;
+    padding-bottom:var(--sheet-h,80px);
+    overflow:hidden;
+    box-sizing:border-box;
   }
 
   header{
@@ -334,7 +338,7 @@ body.light .sheet-roll-btn{color:#f0ece4}
   .side-roll-only{display:none !important}
   .key-hints{display:none}
 
-  /* game-area fills remaining space between turn-bar and bottom-sheet */
+  /* game-area fills everything left after header + turn-bar */
   .game-area{
     grid-template-columns:1fr;gap:0;
     flex:1;min-height:0;
@@ -342,36 +346,38 @@ body.light .sheet-roll-btn{color:#f0ece4}
   }
   .board-col{
     display:flex;align-items:center;justify-content:center;
-    width:100%;height:100%;
+    width:100%;height:100%;min-height:0;
   }
 
-  /* board-wrap: a square that fills as much of the viewport as possible.
-     --bh is the available height (set by JS); we take the min of that and
-     100vw so the board is always square and never overflows.               */
+  /* board-wrap: square, sized to fit the available space.
+     --bh = available height (set by JS). Take the min of that and
+     (100vw - 6px) so the board stays square in both orientations.       */
   .board-wrap{
-    width:min(calc(100vw - 6px), var(--bh, 58vh));
-    height:min(calc(100vw - 6px), var(--bh, 58vh));
+    width:min(calc(100vw - 8px), var(--bh, 60dvh));
+    height:min(calc(100vw - 8px), var(--bh, 60dvh));
+    max-width:min(calc(100vw - 8px), var(--bh, 60dvh));
+    max-height:min(calc(100vw - 8px), var(--bh, 60dvh));
     flex-shrink:0;
     border-radius:6px;padding:2px;
     overflow:hidden;
     position:relative;
+    margin:auto;
   }
 
   /* SVG fills its wrapper exactly */
-  #gameBoard{
-    width:100%;
-    height:100%;
-    display:block;
-  }
+  #gameBoard{width:100%;height:100%;display:block;}
 
   /* Bottom sheet */
   .bottom-sheet{display:block}
   .sheet-handle{display:none}
   .sheet-tabs{display:none}
   .sheet-body{display:none}
-  .sheet-roll-row{padding:10px 16px max(14px,env(safe-area-inset-bottom));gap:12px}
-  .sheet-roll-btn{padding:14px 36px;font-size:.88rem;letter-spacing:.2em;border-radius:10px}
-  .sheet-status{font-size:.73rem}
+  .sheet-roll-row{
+    padding:10px 16px max(14px,env(safe-area-inset-bottom));
+    gap:12px;
+  }
+  .sheet-roll-btn{padding:13px 32px;font-size:.85rem;letter-spacing:.2em;border-radius:10px}
+  .sheet-status{font-size:.72rem}
 }
 @media(max-width:480px){
   .win-card{padding:18px 14px;max-width:calc(100vw - 24px)}
@@ -1670,22 +1676,19 @@ const SnakeRenderer={
     const hg=mksvg('g',{transform:`translate(${head.x},${head.y}) rotate(${angle})`});
     const hc=pal.stroke;
 
-    /* ── Tongue ── */
-    const tgPos=mksvg('g',{transform:'translate(13,0)'}); 
-    const tgAnim=mksvg('g');                              
+    /* ── Tongue — FIRST so it renders under hood/head ── */
+    const tgPos=mksvg('g',{transform:'translate(13,0)'});
+    const tgAnim=mksvg('g');
     tgAnim.appendChild(mksvg('line',{x1:'0',y1:'0',x2:'5',y2:'0',
       stroke:'#ff1533','stroke-width':'2.2','stroke-linecap':'round'}));
     tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'-2',
       stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
     tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'2',
       stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
-    tgAnim.style.cssText=`
-      transform-box:fill-box;
-      transform-origin:left center;
-      animation:snkTongue ${(1.9+idx*.42).toFixed(1)}s ease-in-out infinite;
-    `;
+    tgAnim.style.cssText=`transform-box:fill-box;transform-origin:left center;
+      animation:snkTongue ${(1.9+idx*.42).toFixed(1)}s ease-in-out infinite;`;
     tgPos.appendChild(tgAnim);
-    hg.appendChild(tgPos); 
+    hg.appendChild(tgPos);
 
     /* Hood */
     hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'13',fill:'rgba(0,0,0,.22)',opacity:'.5'}));
@@ -1713,8 +1716,8 @@ const SnakeRenderer={
     hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,.28)'}));
 
     sg.appendChild(hg);
-    if(fromTile!=null) SnakeRenderer.headMap[fromTile]=hg;
-    sg.addEventListener('mouseenter',()=>{sg.style.filter='brightness(1.25)';});
+    if(fromTile!=null) SnakeRenderer.headMap[fromTile]={hg,xfBase:`translate(${head.x},${head.y}) rotate(${angle})`};
+        sg.addEventListener('mouseenter',()=>{sg.style.filter='brightness(1.25)';});
     sg.addEventListener('mouseleave',()=>{sg.style.filter='';});
     g.appendChild(sg);
   }
@@ -1915,36 +1918,24 @@ const Anim={
     this._deltaPopup(to,`−${from-to}`,'#d94f4f');await wait(60);
   },
 
-  /* ── LUNGE ───────────────────────────────────────────────────────────────
-     Moves the head forward `lungePx` in its own facing direction using rAF
-     so we write directly to the SVG transform attribute — no CSS/SVG conflict.
-     Phase 0→35%: strike forward + scale up.
-     Phase 35→50%: hold peak (chomping moment).
-     Phase 50→100%: snap back with slight overshoot then settle.           */
+  /* ── LUNGE ─────────────────────────────────────────────────────────────
+     rAF-based: moves head forward lungePx in its facing direction.
+     0→35% strike, 35→52% hold, 52→100% snap back.                      */
   _lungeFwd(hg,xfBase,lungePx,scalePeak,durationMs){
     const mTr=xfBase.match(/translate\(([^,]+),([^)]+)\)/);
     const mRo=xfBase.match(/rotate\(([^)]+)\)/);
     const tx=mTr?+mTr[1]:0, ty=mTr?+mTr[2]:0;
     const angle=mRo?+mRo[1]:0;
     const rad=angle*Math.PI/180;
-    const fx=Math.cos(rad), fy=Math.sin(rad); // world-space facing direction
-
+    const fx=Math.cos(rad), fy=Math.sin(rad);
     return new Promise(res=>{
       const t0=performance.now();
       function frame(now){
         const p=Math.min((now-t0)/durationMs,1);
         let lunge,sc;
-        if(p<.35){          // ── strike ──
-          const t=p/.35, e=t<.5?2*t*t:-1+(4-2*t)*t;
-          lunge=lungePx*e; sc=1+(scalePeak-1)*e;
-        }else if(p<.52){    // ── hold bite ──
-          lunge=lungePx; sc=scalePeak;
-        }else{              // ── snap back with tiny overshoot ──
-          const t=(p-.52)/.48, e=t<.5?2*t*t:-1+(4-2*t)*t;
-          const over=Math.sin(t*Math.PI)*.18; // small bounce
-          lunge=lungePx*(1-e)+lungePx*over*(1-t);
-          sc=scalePeak+(1-scalePeak)*e;
-        }
+        if(p<.35){const t=p/.35,e=t<.5?2*t*t:-1+(4-2*t)*t;lunge=lungePx*e;sc=1+(scalePeak-1)*e;}
+        else if(p<.52){lunge=lungePx;sc=scalePeak;}
+        else{const t=(p-.52)/.48,e=t<.5?2*t*t:-1+(4-2*t)*t;const ov=Math.sin(t*Math.PI)*.18;lunge=lungePx*(1-e)+lungePx*ov*(1-t);sc=scalePeak+(1-scalePeak)*e;}
         hg.setAttribute('transform',
           `translate(${(tx+fx*lunge).toFixed(2)},${(ty+fy*lunge).toFixed(2)}) rotate(${angle}) scale(${sc.toFixed(3)})`);
         if(p<1)requestAnimationFrame(frame);
@@ -1954,24 +1945,21 @@ const Anim={
     });
   },
 
-  /* ── CHOMP sequence ──────────────────────────────────────────────────────
-     Phase 1 — Lunge: head strikes while token is still visible (dramatic!)
-     Phase 2 — Eat:   token fear-shakes then vanishes
-     Phase 3 — Bump:  lump travels body, hidden token rides inside          */
+  /* ── CHOMP sequence ─────────────────────────────────────────────────────
+     Phase 1 — Lunge: head strikes while token visible
+     Phase 2 — Token vanishes
+     Phase 3 — Bump travels body, token rides inside                       */
   async _chomp(pi,fromTile,slidePath){
     if(State.fast){Tokens.els[pi].style.opacity='0';return;}
-    const hg=SnakeRenderer.headMap[fromTile];
+    const entry=SnakeRenderer.headMap[fromTile];
     const tokenEl=Tokens.els[pi];
-    if(!hg||!tokenEl)return;
+    if(!entry||!tokenEl)return;
+    const{hg,xfBase}=entry;
 
-    const xfBase=hg.getAttribute('transform')||'';
-
-    // ── Phase 1: LUNGE (token still visible — player sees the strike) ────
     Sound.chomp();vibrate([60,30,120,30,60]);
     this._flashBoard('rgba(217,30,30,.22)');
     await this._lungeFwd(hg,xfBase,16,1.18,520);
 
-    // ── Phase 2: TOKEN FEAR-SHAKE → VANISH ───────────────────────────────
     const tkPos=tokenEl.getAttribute('transform')||'translate(0,0)';
     await new Promise(res=>{
       tokenEl.animate([
@@ -1985,12 +1973,11 @@ const Anim={
     });
     tokenEl.style.opacity='0';
 
-    // ── Phase 3: BUMP travels head → tail (token rides inside) ───────────
     await this._animateBump(fromTile,slidePath,pi,1000);
     hg.setAttribute('transform',xfBase);
   },
 
-  /* Redraws body ribbon each frame with a Gaussian bulge at position t.
+    /* Redraws body ribbon each frame with a Gaussian bulge at position t.
      Simultaneously moves the hidden token along the slide path so it
      appears to sit inside the lump.                                    */
   _animateBump(fromTile,slidePath,pi,durationMs){
@@ -3306,6 +3293,7 @@ const Lobby={
     // Show game
     document.getElementById('lobbyOverlay').style.display='none';
     document.getElementById('appRoot').style.display='block';
+    requestAnimationFrame(()=>{ _syncBoardHeight(); requestAnimationFrame(_syncBoardHeight); });
     if(!Game._listenersSet)Game.init();else Game._build();
     UI.clearLog();
     document.getElementById('turnCount').textContent=State.turnNum;
@@ -3348,6 +3336,7 @@ const Lobby={
     document.getElementById('notifBtn').style.display='none';
     document.getElementById('lobbyOverlay').style.display='none';
     document.getElementById('appRoot').style.display='block';
+    requestAnimationFrame(()=>{ _syncBoardHeight(); requestAnimationFrame(_syncBoardHeight); });
     Game.init();
   }
 };
@@ -3443,21 +3432,32 @@ const BoardNotif={
 /* ── MOBILE BOARD HEIGHT ────────────────────────────────────────────────── */
 function _syncBoardHeight(){
   if(window.innerWidth>720)return;
-  let used=8;
-  [document.querySelector('#appRoot header'),
-   document.getElementById('turnBar'),
-   document.getElementById('bottomSheet')
-  ].forEach(el=>{if(el)used+=el.getBoundingClientRect().height;});
-  used+=12;
-  const avail=Math.max(100,window.innerHeight-used);
-  document.documentElement.style.setProperty('--bh',avail+'px');
+  const root=document.documentElement;
+  const dvh=window.innerHeight;
+
+  // Measure fixed bottom sheet height (it doesn't participate in flex layout)
+  const sheet=document.getElementById('bottomSheet');
+  const sheetH=sheet?sheet.getBoundingClientRect().height:72;
+  root.style.setProperty('--sheet-h', sheetH+'px');
+
+  // Measure chrome that IS in the flex layout
+  const header=document.querySelector('#appRoot header');
+  const turnBar=document.getElementById('turnBar');
+  let used=sheetH+8; // sheet + .app top padding
+  if(header)used+=header.getBoundingClientRect().height;
+  if(turnBar)used+=turnBar.getBoundingClientRect().height;
+  used+=16; // margins/gaps
+
+  const avail=Math.max(80, dvh-used);
+  root.style.setProperty('--bh', avail+'px');
 }
 
 /* ── BOOT ───────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',()=>{
-  // Mobile board sizing — run on load and every resize
-  _syncBoardHeight();
+  // Mobile board sizing — run after first paint so measurements are accurate
+  requestAnimationFrame(()=>{ _syncBoardHeight(); requestAnimationFrame(_syncBoardHeight); });
   window.addEventListener('resize',_syncBoardHeight);
+  window.addEventListener('orientationchange',()=>setTimeout(_syncBoardHeight,120));
   MP.initFirebase();
   Lobby.init();
   // Typing indicator wiring
