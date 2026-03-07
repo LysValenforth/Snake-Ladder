@@ -1056,7 +1056,36 @@ const Sound={
   roll(){if(this.muted)return;try{const c=this._ctx();if(!c)return;const b=c.createBuffer(1,c.sampleRate*.05,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*10);const s=c.createBufferSource(),g=c.createGain();g.gain.value=.12;s.buffer=b;s.connect(g);g.connect(c.destination);s.start();}catch(e){}},
   snake(){if(this.muted)return;try{const c=this._ctx();if(!c)return;const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';o.frequency.setValueAtTime(320,c.currentTime);o.frequency.exponentialRampToValueAtTime(70,c.currentTime+.7);g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.7);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.75);}catch(e){}},
   ladder(){if(this.muted)return;try{const c=this._ctx();if(!c)return;[0,.12,.24].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=[370,494,587][i];g.gain.setValueAtTime(.07,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.22);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.28);});}catch(e){}},
-  win(){if(this.muted)return;try{const c=this._ctx();if(!c)return;[0,.1,.2,.35].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=[440,550,660,880][i];g.gain.setValueAtTime(.1,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.45);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.5);});}catch(e){}}
+  win(){if(this.muted)return;try{const c=this._ctx();if(!c)return;[0,.1,.2,.35].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=[440,550,660,880][i];g.gain.setValueAtTime(.1,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.45);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.5);});}catch(e){}},
+  chomp(){if(this.muted)return;try{const c=this._ctx();if(!c)return;
+    // Low thud + crunch layers
+    [0,.04,.09].forEach((t,i)=>{
+      const o=c.createOscillator(),g=c.createGain();
+      o.type='sawtooth';
+      o.frequency.setValueAtTime([180,120,90][i],c.currentTime+t);
+      o.frequency.exponentialRampToValueAtTime([60,45,35][i],c.currentTime+t+.12);
+      g.gain.setValueAtTime(.14,c.currentTime+t);
+      g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.18);
+      o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.22);
+    });
+    // Noise burst for the crunch texture
+    const buf=c.createBuffer(1,c.sampleRate*.08,c.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*18);
+    const s=c.createBufferSource(),g=c.createGain();g.gain.value=.18;s.buffer=buf;s.connect(g);g.connect(c.destination);s.start();
+  }catch(e){}},
+  nearMiss(){if(this.muted)return;try{const c=this._ctx();if(!c)return;
+    // Sharp hiss + snap
+    const buf=c.createBuffer(1,c.sampleRate*.12,c.sampleRate);
+    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*9);
+    const s=c.createBufferSource(),gn=c.createGain();
+    const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=3200;f.Q.value=1.5;
+    gn.gain.value=.22;s.buffer=buf;s.connect(f);f.connect(gn);gn.connect(c.destination);s.start();
+    // Low snap thud
+    const o=c.createOscillator(),g2=c.createGain();o.type='sine';
+    o.frequency.setValueAtTime(90,c.currentTime);o.frequency.exponentialRampToValueAtTime(30,c.currentTime+.08);
+    g2.gain.setValueAtTime(.1,c.currentTime);g2.gain.exponentialRampToValueAtTime(.001,c.currentTime+.1);
+    o.connect(g2);g2.connect(c.destination);o.start();o.stop(c.currentTime+.12);
+  }catch(e){}}
 };
 
 /* ── PLAYERS ─────────────────────────────────────────────────────────────── */
@@ -1407,198 +1436,270 @@ function buildFilters(){
   });
 }
 
-/* ── SNAKES (cute SVG snake with tapered body, head, eyes, tongue) ──────── */
+/* ── SNAKES ──────────────────────────────────────────────────────────────── */
 const SnakeRenderer={
   pathMap:{},
-  render(){
-    const g=document.getElementById('snakesGroup');g.innerHTML='';this.pathMap={};
-    let defs=document.getElementById('snakeDefs');
-    if(!defs){defs=mksvg('defs',{id:'snakeDefs'});document.getElementById('gameBoard').insertBefore(defs,document.getElementById('gameBoard').firstChild);}
-    defs.innerHTML='';
-    Object.entries(Config.SNAKES).forEach(([from,to],idx)=>{
-      const pal=Config.SNAKE_COLORS[idx%Config.SNAKE_COLORS.length];
-      const sign=idx%2===0?1:-1;
-      const d=this._bezier(Board.center(+from),Board.center(+to),sign);
-      this.pathMap[+from]=d;
-      // Body gradient: full color at head, fades at tail
-      const gradId=`snakeGrad${idx}`;
-      const grad=mksvg('linearGradient',{id:gradId,gradientUnits:'userSpaceOnUse',
-        x1:Board.center(+from).x,y1:Board.center(+from).y,
-        x2:Board.center(+to).x,y2:Board.center(+to).y});
-      const s1=mksvg('stop',{offset:'0%'});s1.style.stopColor=pal.stroke;s1.style.stopOpacity='1';
-      const s2=mksvg('stop',{offset:'100%'});s2.style.stopColor=pal.stroke;s2.style.stopOpacity='0.35';
-      grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);
-      // Belly gradient (lighter stripe)
-      const bellyId=`snakeBelly${idx}`;
-      const belly=mksvg('linearGradient',{id:bellyId,gradientUnits:'userSpaceOnUse',
-        x1:Board.center(+from).x,y1:Board.center(+from).y,
-        x2:Board.center(+to).x,y2:Board.center(+to).y});
-      const b1=mksvg('stop',{offset:'0%'});b1.style.stopColor='rgba(255,255,255,0.35)';b1.style.stopOpacity='1';
-      const b2=mksvg('stop',{offset:'100%'});b2.style.stopColor='rgba(255,255,255,0.05)';b2.style.stopOpacity='1';
-      belly.appendChild(b1);belly.appendChild(b2);defs.appendChild(belly);
-      this._draw(g,Board.center(+from),Board.center(+to),pal,idx,d,gradId,bellyId);
-    });
+  headMap:{}, // from-tile → head <g> element, used by chomp/near-miss anims
+  _cr2b(p0,p1,p2,p3){
+    return{p0:p1,
+      p1:{x:p1.x+(p2.x-p0.x)/6, y:p1.y+(p2.y-p0.y)/6},
+      p2:{x:p2.x-(p3.x-p1.x)/6, y:p2.y-(p3.y-p1.y)/6},
+      p3:p2};
   },
-  _bezier(h,t,sign=1){
-    const dx=t.x-h.x,dy=t.y-h.y,len=Math.sqrt(dx*dx+dy*dy);
-    const nx=-dy/len*sign,ny=dx/len*sign,amp=Math.min(52,len*.3);
-    return`M${h.x},${h.y} C${h.x+dx*.28+nx*amp},${h.y+dy*.28+ny*amp},${h.x+dx*.72-nx*amp},${h.y+dy*.72-ny*amp},${t.x},${t.y}`;
+
+  /* ── Build smooth S-curve segments via Catmull-Rom waypoints ────────────
+     Short snakes: 1 gentle arc.
+     Medium: 2-wave S-curve (3 bezier segments, perfectly smooth at joins).
+     Long:   3-wave S-curve (4 bezier segments). */
+  _segments(head,tail,idx){
+    const dx=tail.x-head.x, dy=tail.y-head.y;
+    const len=Math.sqrt(dx*dx+dy*dy);
+    const px=-dy/len, py=dx/len;        // left-perp unit
+    const sign=idx%2===0?1:-1;
+
+    if(len<130){
+      /* Single arc */
+      const amp=Math.min(50,len*.34);
+      return[{p0:head,
+        p1:{x:head.x+dx*.28+px*amp*sign, y:head.y+dy*.28+py*amp*sign},
+        p2:{x:head.x+dx*.72-px*amp*sign, y:head.y+dy*.72-py*amp*sign},
+        p3:tail}];
+    }
+
+    /* Build waypoints: [ghost_before, head, peak…, tail, ghost_after]
+       Peaks alternate sides to create S-curves.
+       Ghost points control the entry/exit tangent so the snake flows
+       naturally out of the head and into the tail. */
+    const nWaves=len<270?2:3;
+    const amp=Math.min(46, len*(nWaves===2?.20:.17));
+
+    const wps=[];
+    // Ghost before head — slightly behind in direction away from tail
+    wps.push({x:head.x-dx*.15/nWaves, y:head.y-dy*.15/nWaves});
+    wps.push(head);
+    for(let w=0;w<nWaves;w++){
+      const t=(w+0.5)/nWaves;
+      const s=w%2===0?sign:-sign;
+      wps.push({x:head.x+dx*t+px*amp*s, y:head.y+dy*t+py*amp*s});
+    }
+    wps.push(tail);
+    // Ghost after tail — continues in same direction
+    wps.push({x:tail.x+dx*.15/nWaves, y:tail.y+dy*.15/nWaves});
+
+    /* Convert each interior Catmull-Rom segment to a bezier.
+       Segments: wps[1]→wps[2], wps[2]→wps[3], …, wps[n-3]→wps[n-2] */
+    const segs=[];
+    for(let i=1;i<wps.length-2;i++)
+      segs.push(this._cr2b(wps[i-1],wps[i],wps[i+1],wps[i+2]));
+    return segs;
   },
-  _pt(p0,p1,p2,p3,t){
+
+  /* ── Compound "M…C…C…" path string from an array of bezier segments ───── */
+  _pathStr(segs){
+    let d=`M${segs[0].p0.x.toFixed(1)},${segs[0].p0.y.toFixed(1)}`;
+    for(const{p1,p2,p3}of segs)
+      d+=` C${p1.x.toFixed(1)},${p1.y.toFixed(1)},${p2.x.toFixed(1)},${p2.y.toFixed(1)},${p3.x.toFixed(1)},${p3.y.toFixed(1)}`;
+    return d;
+  },
+
+  /* ── Point on one bezier segment ─────────────────────────────────────── */
+  _ptSeg({p0,p1,p2,p3},t){
     const u=1-t;
     return{x:u*u*u*p0.x+3*u*u*t*p1.x+3*u*t*t*p2.x+t*t*t*p3.x,
            y:u*u*u*p0.y+3*u*u*t*p1.y+3*u*t*t*p2.y+t*t*t*p3.y};
   },
-  _tan(p0,p1,p2,p3,t){
+
+  /* ── Normalised tangent on one bezier segment ─────────────────────────── */
+  _tanSeg({p0,p1,p2,p3},t){
     const u=1-t;
     const dx=3*(u*u*(p1.x-p0.x)+2*u*t*(p2.x-p1.x)+t*t*(p3.x-p2.x));
     const dy=3*(u*u*(p1.y-p0.y)+2*u*t*(p2.y-p1.y)+t*t*(p3.y-p2.y));
-    const len=Math.sqrt(dx*dx+dy*dy)||1;
-    return{x:dx/len,y:dy/len};
+    const l=Math.sqrt(dx*dx+dy*dy)||1;
+    return{x:dx/l,y:dy/l};
   },
-  // Tapered ribbon as filled polygon
-  _bodyPath(p0,p1,p2,p3){
-    const N=48;
-    const wHead=6, wTail=0.5;
-    const left=[],right=[];
+
+  /* ── Uniformly sample N+1 {pt,tn} across ALL segments ─────────────────── */
+  _sample(segs,N){
+    const out=[];
     for(let i=0;i<=N;i++){
-      const t=i/N;
-      const pt=this._pt(p0,p1,p2,p3,t);
-      const tn=this._tan(p0,p1,p2,p3,t);
-      const ease=1-Math.pow(t,1.6);
-      const w=wTail+(wHead-wTail)*ease;
-      const nx=-tn.y, ny=tn.x;
-      left.push({x:pt.x+nx*w, y:pt.y+ny*w});
-      right.push({x:pt.x-nx*w, y:pt.y-ny*w});
+      const gt=i/N;
+      const si=Math.min(Math.floor(gt*segs.length),segs.length-1);
+      const lt=gt*segs.length-si;
+      out.push({pt:this._ptSeg(segs[si],Math.min(lt,1)),
+                tn:this._tanSeg(segs[si],Math.min(lt,.999))});
     }
-    let d=`M${left[0].x.toFixed(2)},${left[0].y.toFixed(2)}`;
-    for(let i=1;i<=N;i++) d+=` L${left[i].x.toFixed(2)},${left[i].y.toFixed(2)}`;
-    for(let i=N;i>=0;i--) d+=` L${right[i].x.toFixed(2)},${right[i].y.toFixed(2)}`;
+    return out;
+  },
+
+  /* ── Tapered ribbon polygon across all segments ─────────────────────── */
+  _ribbonPath(segs,wHead,wTail){
+    const N=56,s=this._sample(segs,N),L=[],R=[];
+    s.forEach(({pt,tn},i)=>{
+      const ease=1-Math.pow(i/N,1.8);
+      const w=wTail+(wHead-wTail)*ease;
+      const nx=-tn.y,ny=tn.x;
+      L.push({x:pt.x+nx*w,y:pt.y+ny*w});
+      R.push({x:pt.x-nx*w,y:pt.y-ny*w});
+    });
+    let d=`M${L[0].x.toFixed(2)},${L[0].y.toFixed(2)}`;
+    for(let i=1;i<=N;i++) d+=` L${L[i].x.toFixed(2)},${L[i].y.toFixed(2)}`;
+    for(let i=N;i>=0;i--) d+=` L${R[i].x.toFixed(2)},${R[i].y.toFixed(2)}`;
     return d+' Z';
   },
-  // Belly stripe (narrower inner ribbon)
-  _bellyPath(p0,p1,p2,p3){
-    const N=48;
-    const wHead=2.8, wTail=0.2;
-    const left=[],right=[];
-    for(let i=0;i<=N;i++){
-      const t=i/N;
-      const pt=this._pt(p0,p1,p2,p3,t);
-      const tn=this._tan(p0,p1,p2,p3,t);
-      const ease=1-Math.pow(t,1.6);
-      const w=wTail+(wHead-wTail)*ease;
-      const nx=-tn.y, ny=tn.x;
-      left.push({x:pt.x+nx*w, y:pt.y+ny*w});
-      right.push({x:pt.x-nx*w, y:pt.y-ny*w});
-    }
-    let d=`M${left[0].x.toFixed(2)},${left[0].y.toFixed(2)}`;
-    for(let i=1;i<=N;i++) d+=` L${left[i].x.toFixed(2)},${left[i].y.toFixed(2)}`;
-    for(let i=N;i>=0;i--) d+=` L${right[i].x.toFixed(2)},${right[i].y.toFixed(2)}`;
-    return d+' Z';
+
+  render(){
+    const g=document.getElementById('snakesGroup');g.innerHTML='';this.pathMap={};this.headMap={};
+    let defs=document.getElementById('snakeDefs');
+    if(!defs){defs=mksvg('defs',{id:'snakeDefs'});
+      document.getElementById('gameBoard').insertBefore(defs,document.getElementById('gameBoard').firstChild);}
+    defs.innerHTML='';
+
+    /* Shared drop-shadow filter */
+    const sf=mksvg('filter',{id:'snkShadow',x:'-25%',y:'-25%',width:'150%',height:'150%'});
+    sf.appendChild(mksvg('feDropShadow',{dx:'0',dy:'1.5',stdDeviation:'2.2','flood-color':'#000','flood-opacity':'.6'}));
+    defs.appendChild(sf);
+
+    Object.entries(Config.SNAKES).forEach(([from,to],idx)=>{
+      const pal=Config.SNAKE_COLORS[idx%Config.SNAKE_COLORS.length];
+      const head=Board.center(+from), tail=Board.center(+to);
+      const segs=this._segments(head,tail,idx);
+      this.pathMap[+from]=this._pathStr(segs);
+
+      /* Body gradient head → tail */
+      const gid=`snkGrad${idx}`;
+      const gr=mksvg('linearGradient',{id:gid,gradientUnits:'userSpaceOnUse',
+        x1:head.x,y1:head.y,x2:tail.x,y2:tail.y});
+      const gs1=mksvg('stop',{offset:'0%'});gs1.style.cssText=`stop-color:${pal.stroke};stop-opacity:1`;
+      const gs2=mksvg('stop',{offset:'100%'});gs2.style.cssText=`stop-color:${pal.stroke};stop-opacity:0.3`;
+      gr.appendChild(gs1);gr.appendChild(gs2);defs.appendChild(gr);
+
+      /* Belly gradient */
+      const bid=`snkBelly${idx}`;
+      const bl=mksvg('linearGradient',{id:bid,gradientUnits:'userSpaceOnUse',
+        x1:head.x,y1:head.y,x2:tail.x,y2:tail.y});
+      const b1=mksvg('stop',{offset:'0%'});b1.style.cssText='stop-color:rgba(255,255,255,.38);stop-opacity:1';
+      const b2=mksvg('stop',{offset:'100%'});b2.style.cssText='stop-color:rgba(255,255,255,.04);stop-opacity:1';
+      bl.appendChild(b1);bl.appendChild(b2);defs.appendChild(bl);
+
+      this._draw(g,head,tail,pal,idx,segs,gid,bid,+from);
+    });
   },
-  _draw(g,head,tail,pal,idx,d,gradId,bellyId){
-    const speed=(5+idx*.6).toFixed(1);
+
+  _draw(g,head,tail,pal,idx,segs,gid,bid,fromTile){
     const sg=mksvg('g',{'class':'snake-group'});
+    const fullPath=this._pathStr(segs);
 
-    const m=d.match(/M([\d.]+),([\d.]+) C([\d.]+),([\d.]+),([\d.]+),([\d.]+),([\d.]+),([\d.]+)/);
-    const p0={x:+m[1],y:+m[2]},p1={x:+m[3],y:+m[4]},p2={x:+m[5],y:+m[6]},p3={x:+m[7],y:+m[8]};
+    /* Body starts just behind the hood so it doesn't poke through the head */
+    const tang0=this._tanSeg(segs[0],0.02);
+    const bs={x:head.x+tang0.x*8, y:head.y+tang0.y*8};
+    const bSegs=[{p0:bs,
+      p1:{x:segs[0].p1.x+(bs.x-segs[0].p0.x)*.5,
+          y:segs[0].p1.y+(bs.y-segs[0].p0.y)*.5},
+      p2:segs[0].p2,p3:segs[0].p3},
+      ...segs.slice(1)];
 
-    const tang0=this._tan(p0,p1,p2,p3,0.01);
-    const HOOD_BACK=9;
-    const bodyStart={x:head.x+tang0.x*HOOD_BACK, y:head.y+tang0.y*HOOD_BACK};
+    /* Glow halo */
+    sg.appendChild(mksvg('path',{d:fullPath,fill:'none',
+      stroke:pal.glow,'stroke-width':'18','stroke-linecap':'round',opacity:'.6'}));
 
-    const shift={x:bodyStart.x-p0.x, y:bodyStart.y-p0.y};
-    const bp0=bodyStart;
-    const bp1={x:p1.x+shift.x*0.5, y:p1.y+shift.y*0.5};
-    const bp2=p2, bp3=p3;
+    /* Main tapered body */
+    sg.appendChild(mksvg('path',{d:this._ribbonPath(bSegs,6.5,.4),
+      fill:`url(#${gid})`,stroke:'none',filter:'url(#snkShadow)'}));
 
-    // ── Soft glow halo (full original path for visual continuity)
-    sg.appendChild(mksvg('path',{d,fill:'none',stroke:pal.glow,'stroke-width':'16','stroke-linecap':'round'}));
-
-    // ── Main tapered body (starts from back of head)
-    const bodyD=this._bodyPath(bp0,bp1,bp2,bp3);
-    sg.appendChild(mksvg('path',{d:bodyD,fill:`url(#${gradId})`,stroke:'none'}));
-
-    // ── Scale segments along body
-    const NS=18;
+    /* Convex scale arcs across body width */
+    const NS=24, samp=this._sample(bSegs,NS);
     for(let i=1;i<NS;i++){
-      const t=i/NS;
-      const pt=this._pt(bp0,bp1,bp2,bp3,t);
-      const tn=this._tan(bp0,bp1,bp2,bp3,t);
-      const ease=1-Math.pow(t,1.6);
-      const hw=(6*ease+0.4)*0.55;
+      const{pt,tn}=samp[i];
+      const ease=1-Math.pow(i/NS,1.8);
+      const bw=(6.5*ease+.3)*.88;
       const nx=-tn.y, ny=tn.x;
-      const opacity=(0.18+ease*0.12).toFixed(2);
-      sg.appendChild(mksvg('line',{
-        x1:(pt.x+nx*hw).toFixed(2),y1:(pt.y+ny*hw).toFixed(2),
-        x2:(pt.x-nx*hw).toFixed(2),y2:(pt.y-ny*hw).toFixed(2),
-        stroke:'rgba(0,0,0,'+opacity+')','stroke-width':'0.7','stroke-linecap':'round'
-      }));
+      const L={x:pt.x+nx*bw,y:pt.y+ny*bw};
+      const R={x:pt.x-nx*bw,y:pt.y-ny*bw};
+      const mid={x:pt.x+tn.x*bw*.32,y:pt.y+tn.y*bw*.32};
+      sg.appendChild(mksvg('path',{
+        d:`M${L.x.toFixed(2)},${L.y.toFixed(2)} Q${mid.x.toFixed(2)},${mid.y.toFixed(2)} ${R.x.toFixed(2)},${R.y.toFixed(2)}`,
+        fill:'none',stroke:`rgba(0,0,0,${(0.16+ease*.14).toFixed(2)})`,
+        'stroke-width':'.8','stroke-linecap':'round'}));
     }
 
-    // ── Belly stripe
-    const bellyD=this._bellyPath(bp0,bp1,bp2,bp3);
-    sg.appendChild(mksvg('path',{d:bellyD,fill:`url(#${bellyId})`,stroke:'none'}));
+    /* Belly stripe */
+    sg.appendChild(mksvg('path',{d:this._ribbonPath(bSegs,2.8,.14),
+      fill:`url(#${bid})`,stroke:'none'}));
 
-    // ── Head group — cobra style
-    const tang=this._tan(p0,p1,p2,p3,0.01);
-    const angle=Math.atan2(tang.y,tang.x)*180/Math.PI+180;
+    /* Pointed tail tip */
+    const ls=bSegs[bSegs.length-1];
+    const tt=this._tanSeg(ls,.99);
+    const tip={x:ls.p3.x+tt.x*6,y:ls.p3.y+tt.y*6};
+    const tnx=-tt.y,tny=tt.x;
+    sg.appendChild(mksvg('path',{
+      d:`M${(ls.p3.x+tnx*.8).toFixed(2)},${(ls.p3.y+tny*.8).toFixed(2)} L${tip.x.toFixed(2)},${tip.y.toFixed(2)} L${(ls.p3.x-tnx*.8).toFixed(2)},${(ls.p3.y-tny*.8).toFixed(2)}`,
+      fill:pal.stroke,opacity:'.65'}));
+
+    /* ── Head ── */
+    const angle=Math.atan2(tang0.y,tang0.x)*180/Math.PI+180;
     const hg=mksvg('g',{transform:`translate(${head.x},${head.y}) rotate(${angle})`});
+    const hc=pal.stroke;
 
-    // Darken color for hood shadow/depth
-    const darken='rgba(0,0,0,0.22)';
+    /* ── Tongue ── */
+    const tgPos=mksvg('g',{transform:'translate(13,0)'}); 
+    const tgAnim=mksvg('g');                              
+    tgAnim.appendChild(mksvg('line',{x1:'0',y1:'0',x2:'5',y2:'0',
+      stroke:'#ff1533','stroke-width':'2.2','stroke-linecap':'round'}));
+    tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'-2',
+      stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
+    tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'2',
+      stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
+    tgAnim.style.cssText=`
+      transform-box:fill-box;
+      transform-origin:left center;
+      animation:snkTongue ${(1.9+idx*.42).toFixed(1)}s ease-in-out infinite;
+    `;
+    tgPos.appendChild(tgAnim);
+    hg.appendChild(tgPos); 
 
-    const tg=mksvg('g',{transform:'translate(14,4)'});
-    tg.appendChild(mksvg('line',{x1:'0',y1:'0',x2:'7',y2:'0.5',stroke:'#ff2244','stroke-width':'1.6','stroke-linecap':'round'}));
-    tg.appendChild(mksvg('line',{x1:'7',y1:'0.5',x2:'11',y2:'-2.2',stroke:'#ff2244','stroke-width':'1.2','stroke-linecap':'round'}));
-    tg.appendChild(mksvg('line',{x1:'7',y1:'0.5',x2:'11',y2:'3.8',stroke:'#ff2244','stroke-width':'1.2','stroke-linecap':'round'}));
-    tg.style.animation=`tongueFlick ${(1.8+idx*0.35).toFixed(1)}s ease-in-out infinite`;
-    tg.style.transformOrigin='0px 0px';
-    hg.appendChild(tg);
+    /* Hood */
+    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'13',fill:'rgba(0,0,0,.22)',opacity:'.5'}));
+    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'12',fill:hc}));
+    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'-5',rx:'4',ry:'3',fill:'rgba(0,0,0,.15)'}));
+    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'5', rx:'4',ry:'3',fill:'rgba(0,0,0,.15)'}));
+    hg.appendChild(mksvg('ellipse',{cx:'-1',cy:'0', rx:'4',ry:'7', fill:'rgba(255,255,255,.10)'}));
 
-    const hoodColor=pal.stroke;
-    // Hood shadow for depth
-    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'13',fill:darken,opacity:'0.5'}));
-    // Hood main shape
-    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'12',fill:hoodColor}));
-    // Hood pattern: two darker ovals for the classic cobra hood markings
-    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'-5',rx:'4',ry:'3',fill:'rgba(0,0,0,0.15)'}));
-    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'5', rx:'4',ry:'3',fill:'rgba(0,0,0,0.15)'}));
-    // Hood inner lighter center stripe
-    hg.appendChild(mksvg('ellipse',{cx:'-1',cy:'0',rx:'4',ry:'7',fill:'rgba(255,255,255,0.10)'}));
+    /* Head + snout */
+    hg.appendChild(mksvg('ellipse',{cx:'4', cy:'0', rx:'10',ry:'7', fill:hc}));
+    hg.appendChild(mksvg('ellipse',{cx:'2', cy:'-2.5',rx:'6',ry:'3',fill:'rgba(255,255,255,.18)'}));
+    hg.appendChild(mksvg('ellipse',{cx:'12',cy:'0', rx:'4',ry:'3.5',fill:hc}));
 
-    // ── Head proper — rounder, slightly narrower than hood, sits in front
-    hg.appendChild(mksvg('ellipse',{cx:'4',cy:'0',rx:'10',ry:'7',fill:hoodColor}));
-    // Head top highlight
-    hg.appendChild(mksvg('ellipse',{cx:'2',cy:'-2.5',rx:'6',ry:'3',fill:'rgba(255,255,255,0.18)'}));
-    // Snout rounded tip
-    hg.appendChild(mksvg('ellipse',{cx:'12',cy:'0',rx:'4',ry:'3.5',fill:hoodColor}));
+    /* Eyes */
+    [[5,-6,.3],[5,6,-.3]].forEach(([ex,ey,py])=>{
+      const eg=mksvg('g',{transform:`translate(${ex},${ey})`});
+      eg.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'.95'}));
+      eg.appendChild(mksvg('circle',{cx:'.6',cy:String(py),r:'2',fill:'#111'}));
+      eg.appendChild(mksvg('circle',{cx:'1.1',cy:'-.65',r:'.7',fill:'rgba(255,255,255,.85)'}));
+      hg.appendChild(eg);
+    });
 
-    // ── Eyes — large, expressive, on the sides of the head
-    const eyeR=mksvg('g',{transform:'translate(5,-6)'});
-    eyeR.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'0.95'}));
-    eyeR.appendChild(mksvg('circle',{cx:'0.6',cy:'0.3',r:'2',fill:'#111'}));
-    eyeR.appendChild(mksvg('circle',{cx:'1.1',cy:'-0.6',r:'0.7',fill:'rgba(255,255,255,0.85)'}));
-    hg.appendChild(eyeR);
-
-    const eyeL=mksvg('g',{transform:'translate(5,6)'});
-    eyeL.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'0.95'}));
-    eyeL.appendChild(mksvg('circle',{cx:'0.6',cy:'-0.3',r:'2',fill:'#111'}));
-    eyeL.appendChild(mksvg('circle',{cx:'1.1',cy:'-0.8',r:'0.7',fill:'rgba(255,255,255,0.85)'}));
-    hg.appendChild(eyeL);
-
-    // ── Nostrils near snout tip
-    hg.appendChild(mksvg('circle',{cx:'13',cy:'-1.8',r:'1',fill:'rgba(0,0,0,0.25)'}));
-    hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,0.25)'}));
+    /* Nostrils */
+    hg.appendChild(mksvg('circle',{cx:'13',cy:'-1.8',r:'1',fill:'rgba(0,0,0,.28)'}));
+    hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,.28)'}));
 
     sg.appendChild(hg);
+    SnakeRenderer.headMap[fromTile]=hg; // store for chomp/near-miss
+    sg.addEventListener('mouseenter',()=>{sg.style.filter='brightness(1.25)';});
+    sg.addEventListener('mouseleave',()=>{sg.style.filter='';});
     g.appendChild(sg);
   }
 };
 
 if(!document.getElementById('snakeExtraStyles')){
   const st=document.createElement('style');st.id='snakeExtraStyles';
-  st.textContent=`@keyframes tongueFlick{0%,38%,100%{transform:scaleX(1);opacity:1}50%{transform:scaleX(0.15);opacity:0.2}62%{transform:scaleX(1);opacity:1}}`;
+  /* scaleX collapses from right (tip) to left (root) then snaps back out */
+  st.textContent=`
+    @keyframes snkTongue{
+      0%,25%      {transform:scaleX(1);   opacity:1}
+      38%         {transform:scaleX(.06); opacity:.1}
+      52%,100%    {transform:scaleX(1);   opacity:1}
+    }
+  `;
   document.head.appendChild(st);
 }
 
@@ -1773,9 +1874,98 @@ const Anim={
     const d=SnakeRenderer.pathMap[from];const path=mksvg('path',{d,fill:'none',visibility:'hidden'});
     document.getElementById('gameBoard').appendChild(path);this._flashBoard('rgba(217,79,79,.09)');
     document.querySelectorAll('.active-ring').forEach(e=>e.remove());
-    await wait(State.fast?60:220);Tokens._stopBob(pi);await this._glidePath(pi,path,Config.GLIDE_SNAKE);
+    await this.chomp(pi,from);                                    // ← chomp before slide
+    Tokens._stopBob(pi);await this._glidePath(pi,path,Config.GLIDE_SNAKE);
     path.remove();Tokens._snap(pi,to);Tokens.pop(pi);UI.posDisplay(pi,to);
     this._deltaPopup(to,`−${from-to}`,'#d94f4f');await wait(60);
+  },
+
+  /* Snake chomps the token: head lunges forward, token shakes, then releases */
+  async chomp(pi,fromTile){
+    if(State.fast)return;
+    const hg=SnakeRenderer.headMap[fromTile];
+    const tokenEl=Tokens.els[pi];
+    if(!hg||!tokenEl)return;
+
+    Sound.chomp();vibrate([60,30,120,30,60]);
+
+    // Flash the tile red
+    this._flashBoard('rgba(217,30,30,.22)');
+
+    // Parse current head transform to get base translate+rotate
+    const xfBase=hg.getAttribute('transform')||'';
+
+    // Token fear shake — rapid side-to-side
+    const tkPos=tokenEl.getAttribute('transform')||'translate(0,0)';
+    tokenEl.animate([
+      {transform:tkPos},{transform:tkPos+' translate(-4px,-3px) scale(0.85)'},
+      {transform:tkPos+' translate(4px,2px) scale(0.9)'},{transform:tkPos+' translate(-3px,-2px) scale(0.8)'},
+      {transform:tkPos+' translate(2px,3px) scale(0.85)'},{transform:tkPos+' translate(0,0) scale(0)'},
+    ],{duration:400,easing:'ease-in',fill:'forwards'});
+
+    // Head lunge — scale up + push forward slightly in local space
+    hg.animate([
+      {transform:xfBase},
+      {transform:xfBase+' scale(1.35) translate(4px,0)',offset:.3},
+      {transform:xfBase+' scale(1.4) translate(6px,0)',offset:.45},
+      {transform:xfBase+' scale(1.15) translate(2px,0)',offset:.65},
+      {transform:xfBase},
+    ],{duration:480,easing:'cubic-bezier(0.25,0.46,0.45,0.94)',fill:'forwards'});
+
+    await wait(480);
+
+    // Restore token to head position (it'll then glide down the snake)
+    tokenEl.style.opacity='1';
+    const hc=Board.center(fromTile);
+    tokenEl.setAttribute('transform',`translate(${hc.x},${hc.y})`);
+    hg.setAttribute('transform',xfBase);
+  },
+
+  /* Near-miss: snake lunges toward token and snaps but misses */
+  async nearMiss(pi,tokenTile,snakeFromTile){
+    if(State.fast)return;
+    const hg=SnakeRenderer.headMap[snakeFromTile];
+    const tokenEl=Tokens.els[pi];
+    if(!hg||!tokenEl)return;
+
+    Sound.nearMiss();vibrate([40,20,40]);
+
+    const xfBase=hg.getAttribute('transform')||'';
+    const snakeCenter=Board.center(snakeFromTile);
+    const tokenCenter=Board.center(tokenTile);
+
+    // Direction from snake head → token (normalised)
+    const dx=tokenCenter.x-snakeCenter.x, dy=tokenCenter.y-snakeCenter.y;
+    const len=Math.sqrt(dx*dx+dy*dy)||1;
+    const lunge=28; // px to lunge in world space
+    const lx=(dx/len*lunge).toFixed(1), ly=(dy/len*lunge).toFixed(1);
+
+    // Parse translate from head transform so we can offset in world space
+    const mBase=xfBase.match(/translate\(([^,]+),([^)]+)\)/);
+    const bx=mBase?+mBase[1]:snakeCenter.x, by=mBase?+mBase[2]:snakeCenter.y;
+    const lungeXf=`translate(${(bx+dx/len*lunge).toFixed(1)},${(by+dy/len*lunge).toFixed(1)}) rotate(${Math.atan2(dy,dx)*180/Math.PI+180})`;
+
+    // Token recoil
+    const tkPos=tokenEl.getAttribute('transform')||'translate(0,0)';
+    tokenEl.animate([
+      {transform:tkPos},
+      {transform:tkPos+` translate(${(-dx/len*6).toFixed(1)}px,${(-dy/len*6).toFixed(1)}px) scale(1.12)`,offset:.35},
+      {transform:tkPos+` translate(${(-dx/len*4).toFixed(1)}px,${(-dy/len*4).toFixed(1)}px) scale(1.06)`,offset:.6},
+      {transform:tkPos},
+    ],{duration:520,easing:'ease-out'});
+
+    // Head lunge toward token then snap back
+    hg.animate([
+      {transform:xfBase},
+      {transform:lungeXf,offset:.38},
+      {transform:lungeXf,offset:.52},
+      {transform:xfBase},
+    ],{duration:600,easing:'cubic-bezier(0.22,1,0.36,1)'});
+
+    // "CLOSE!" popup
+    this._deltaPopup(tokenTile,'😱 Close!','#ff4444');
+    await wait(620);
+    hg.setAttribute('transform',xfBase);
   },
   async ladderClimb(pi,from,to){
     const b=Board.center(from),tp=Board.center(to);
@@ -2032,6 +2222,10 @@ const Game={
     }
     const won=finalPos===100;
     const bonus=Config.bonusRoll&&roll===6&&!won&&!noMove;
+    // Near-miss: landed exactly 1 tile before a snake's head
+    const nearMissSnake=(!snakeHit&&!noMove&&!bounce&&target>0&&(target in {}||true))
+      ? Object.keys(Config.SNAKES).map(Number).find(s=>s===target+1)
+      : null;
     // Compute next player
     let nextPi=pi,nextTurnNum=State.turnNum;
     if(!bonus){
@@ -2039,14 +2233,14 @@ const Game={
       if(nextPi===0)nextTurnNum=State.turnNum+1;
     }
     return{pi,roll,from,target,finalPos,bounce,noMove,
-      snakeHit,ladderHit,won,bonus,nextPi,nextTurnNum,ts:Date.now()};
+      snakeHit,ladderHit,won,bonus,nearMissSnake:nearMissSnake||null,nextPi,nextTurnNum,ts:Date.now()};
   },
 
   // Playback an event — runs full animation on every client
   async playback(evt){
     if(State.busy&&!MP.active&&!evt._fromExec)return; // local only guard
     State.busy=true;UI.setRoll(false);
-    const{pi,roll,from,target,finalPos,bounce,noMove,snakeHit,ladderHit,won,bonus,nextPi,nextTurnNum}=evt;
+    const{pi,roll,from,target,finalPos,bounce,noMove,snakeHit,ladderHit,won,bonus,nearMissSnake,nextPi,nextTurnNum}=evt;
     const p=State.players[pi];
     const isMyRoll=MP.active&&pi===MP.myIndex;
 
@@ -2070,6 +2264,12 @@ const Game={
     } else {
       Board.showTarget(target,p.color);await wait(State.fast?80:300);Board.clearTarget();
       await Anim.steps(pi,from,target);State.pos[pi]=target;
+      // Near-miss: snake lunges but misses
+      if(nearMissSnake){
+        UI.setStatus(`${p.name} narrowly escaped a snake!`);
+        UI.addLog(`${p.name} narrowly missed the snake at ${nearMissSnake}!`,'event');
+        await Anim.nearMiss(pi,target,nearMissSnake);
+      }
       if(snakeHit){
         UI.setStatus(`Snake! ${p.name}: ${snakeHit.from} → ${snakeHit.to}`);
         State.pos[pi]=snakeHit.to;Sound.snake();vibrate([80,40,80]);
