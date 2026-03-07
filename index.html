@@ -207,6 +207,51 @@ body.light .mobile-roll-btn{color:#f0ece4}
 .particle{position:fixed;pointer-events:none;z-index:999;animation:fall linear forwards}
 @keyframes fall{0%{opacity:1;transform:translateY(0) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(540deg)}}
 @keyframes snakeFlow{from{stroke-dashoffset:40}to{stroke-dashoffset:0}}
+
+/* ── BOARD NOTIFICATION OVERLAY ─────────────────────────────────────────── */
+@keyframes bnotifShow{
+  0%  {opacity:0;transform:translate(-50%,-50%) scale(.72)}
+  14% {opacity:1;transform:translate(-50%,-50%) scale(1.04)}
+  22% {opacity:1;transform:translate(-50%,-50%) scale(1)}
+  72% {opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(.92)}
+}
+.bnotif{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:60;
+  animation:bnotifShow 1.9s ease forwards;
+}
+.bnotif-inner{
+  background:rgba(8,8,8,.88);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:10px;
+  padding:11px 26px 10px;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 4px 32px rgba(0,0,0,.55);
+  text-align:center;
+}
+.bnotif-title{
+  font-family:var(--font);
+  font-size:clamp(.9rem,3.5vw,1.45rem);
+  font-weight:500;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  line-height:1.2;
+}
+.bnotif-sub{
+  font-family:var(--font);
+  font-size:clamp(.48rem,1.6vw,.66rem);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  opacity:.6;
+  margin-top:5px;
+  white-space:nowrap;
+}
 .delta-popup{position:absolute;pointer-events:none;font-family:var(--font);font-size:12px;font-weight:500;animation:deltaRise 1.5s ease forwards}
 @keyframes deltaRise{0%{opacity:0;transform:translateX(-50%) translateY(0) scale(.8)}15%{opacity:1;transform:translateX(-50%) translateY(-6px) scale(1)}70%{opacity:1;transform:translateX(-50%) translateY(-20px) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-34px) scale(.9)}}
 @keyframes winGlow{0%,100%{opacity:.3}50%{opacity:.7}}
@@ -261,23 +306,18 @@ body.light .mobile-roll-btn{color:#f0ece4}
 body.light .sheet-roll-btn{color:#f0ece4}
 
 @media(max-width:720px){
-  /* Full-bleed layout */
   .app{padding:4px 4px 0}
   html,body{height:100%;overflow:hidden}
 
-  /* Stack everything in a flex column filling the screen */
   #appRoot{
     display:flex;flex-direction:column;
     height:100vh;height:100dvh;
     padding-bottom:0;overflow:hidden;
   }
 
-  /* Shrink the header to a single compact line */
   header{
-    flex-direction:row;align-items:center;
-    flex-wrap:nowrap;gap:4px;
-    margin-bottom:4px;padding-bottom:4px;
-    flex-shrink:0;
+    flex-direction:row;align-items:center;flex-wrap:nowrap;gap:4px;
+    margin-bottom:4px;padding-bottom:4px;flex-shrink:0;
   }
   .logo{font-size:.78rem;letter-spacing:.12em;white-space:nowrap}
   .logo-sub{display:none}
@@ -287,50 +327,50 @@ body.light .sheet-roll-btn{color:#f0ece4}
     justify-content:flex-end;
   }
   .header-controls::-webkit-scrollbar{display:none}
-
-  /* Tighter turn bar */
   .turn-bar{margin-bottom:4px;flex-shrink:0}
 
-  /* Hide desktop side & old mobile buttons */
   .side{display:none !important}
   .mobile-roll-area{display:none !important}
   .side-roll-only{display:none !important}
   .key-hints{display:none}
 
-  /* Game area — single column, fills remaining space */
-  .game-area{grid-template-columns:1fr;gap:0;flex:1;min-height:0;display:flex;flex-direction:column}
-  .board-col{
-    display:flex;flex-direction:column;
-    flex:1;min-height:0;width:100%;
-  }
-
-  /* Board wrapper fills all remaining vertical space */
-  .board-wrap{
+  /* game-area fills remaining space between turn-bar and bottom-sheet */
+  .game-area{
+    grid-template-columns:1fr;gap:0;
     flex:1;min-height:0;
-    border-radius:6px;padding:2px;
     display:flex;align-items:center;justify-content:center;
-    overflow:hidden;
+  }
+  .board-col{
+    display:flex;align-items:center;justify-content:center;
+    width:100%;height:100%;
   }
 
-  /* SVG scales to fill the wrapper while keeping square aspect ratio */
+  /* board-wrap: a square that fills as much of the viewport as possible.
+     --bh is the available height (set by JS); we take the min of that and
+     100vw so the board is always square and never overflows.               */
+  .board-wrap{
+    width:min(calc(100vw - 6px), var(--bh, 58vh));
+    height:min(calc(100vw - 6px), var(--bh, 58vh));
+    flex-shrink:0;
+    border-radius:6px;padding:2px;
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* SVG fills its wrapper exactly */
   #gameBoard{
     width:100%;
     height:100%;
-    max-height:calc(100dvh - 155px);
-    object-fit:contain;
     display:block;
   }
 
-  /* Bottom sheet — compact roll bar only */
+  /* Bottom sheet */
   .bottom-sheet{display:block}
   .sheet-handle{display:none}
   .sheet-tabs{display:none}
   .sheet-body{display:none}
-  .sheet-roll-row{padding:10px 16px 14px;gap:12px}
-  .sheet-roll-btn{
-    padding:14px 36px;font-size:.88rem;
-    letter-spacing:.2em;border-radius:10px;
-  }
+  .sheet-roll-row{padding:10px 16px max(14px,env(safe-area-inset-bottom));gap:12px}
+  .sheet-roll-btn{padding:14px 36px;font-size:.88rem;letter-spacing:.2em;border-radius:10px}
   .sheet-status{font-size:.73rem}
 }
 @media(max-width:480px){
@@ -1058,33 +1098,13 @@ const Sound={
   ladder(){if(this.muted)return;try{const c=this._ctx();if(!c)return;[0,.12,.24].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=[370,494,587][i];g.gain.setValueAtTime(.07,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.22);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.28);});}catch(e){}},
   win(){if(this.muted)return;try{const c=this._ctx();if(!c)return;[0,.1,.2,.35].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=[440,550,660,880][i];g.gain.setValueAtTime(.1,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.45);o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.5);});}catch(e){}},
   chomp(){if(this.muted)return;try{const c=this._ctx();if(!c)return;
-    // Low thud + crunch layers
-    [0,.04,.09].forEach((t,i)=>{
-      const o=c.createOscillator(),g=c.createGain();
-      o.type='sawtooth';
-      o.frequency.setValueAtTime([180,120,90][i],c.currentTime+t);
-      o.frequency.exponentialRampToValueAtTime([60,45,35][i],c.currentTime+t+.12);
-      g.gain.setValueAtTime(.14,c.currentTime+t);
-      g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.18);
-      o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.22);
-    });
-    // Noise burst for the crunch texture
-    const buf=c.createBuffer(1,c.sampleRate*.08,c.sampleRate);
-    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*18);
-    const s=c.createBufferSource(),g=c.createGain();g.gain.value=.18;s.buffer=buf;s.connect(g);g.connect(c.destination);s.start();
-  }catch(e){}},
-  nearMiss(){if(this.muted)return;try{const c=this._ctx();if(!c)return;
-    // Sharp hiss + snap
-    const buf=c.createBuffer(1,c.sampleRate*.12,c.sampleRate);
-    const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*9);
-    const s=c.createBufferSource(),gn=c.createGain();
-    const f=c.createBiquadFilter();f.type='bandpass';f.frequency.value=3200;f.Q.value=1.5;
-    gn.gain.value=.22;s.buffer=buf;s.connect(f);f.connect(gn);gn.connect(c.destination);s.start();
-    // Low snap thud
-    const o=c.createOscillator(),g2=c.createGain();o.type='sine';
-    o.frequency.setValueAtTime(90,c.currentTime);o.frequency.exponentialRampToValueAtTime(30,c.currentTime+.08);
-    g2.gain.setValueAtTime(.1,c.currentTime);g2.gain.exponentialRampToValueAtTime(.001,c.currentTime+.1);
-    o.connect(g2);g2.connect(c.destination);o.start();o.stop(c.currentTime+.12);
+    [0,.04,.09].forEach((t,i)=>{const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';
+      o.frequency.setValueAtTime([180,120,90][i],c.currentTime+t);o.frequency.exponentialRampToValueAtTime([60,45,35][i],c.currentTime+t+.12);
+      g.gain.setValueAtTime(.14,c.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.18);
+      o.connect(g);g.connect(c.destination);o.start(c.currentTime+t);o.stop(c.currentTime+t+.22);});
+    const buf=c.createBuffer(1,c.sampleRate*.08,c.sampleRate);const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/d.length*18);
+    const s=c.createBufferSource(),gn=c.createGain();gn.gain.value=.18;s.buffer=buf;s.connect(gn);gn.connect(c.destination);s.start();
   }catch(e){}}
 };
 
@@ -1439,7 +1459,11 @@ function buildFilters(){
 /* ── SNAKES ──────────────────────────────────────────────────────────────── */
 const SnakeRenderer={
   pathMap:{},
-  headMap:{}, // from-tile → head <g> element, used by chomp/near-miss anims
+  headMap:{},  // fromTile → head <g>  (chomp lunge)
+  bodyMap:{},  // fromTile → body <path> (bump redraw)
+  segsMap:{},  // fromTile → bSegs array  (bump redraw)
+
+  /* ── Catmull-Rom → cubic bezier (guarantees C1 continuity at all joints) ─ */
   _cr2b(p0,p1,p2,p3){
     return{p0:p1,
       p1:{x:p1.x+(p2.x-p0.x)/6, y:p1.y+(p2.y-p0.y)/6},
@@ -1532,11 +1556,15 @@ const SnakeRenderer={
   },
 
   /* ── Tapered ribbon polygon across all segments ─────────────────────── */
-  _ribbonPath(segs,wHead,wTail){
+  /* Tapered ribbon. Optional bump={t,amt,sigma} adds a Gaussian bulge
+     at fractional position t (0=head,1=tail).                          */
+  _ribbonPath(segs,wHead,wTail,bump=null){
     const N=56,s=this._sample(segs,N),L=[],R=[];
     s.forEach(({pt,tn},i)=>{
-      const ease=1-Math.pow(i/N,1.8);
-      const w=wTail+(wHead-wTail)*ease;
+      const frac=i/N;
+      const ease=1-Math.pow(frac,1.8);
+      let w=wTail+(wHead-wTail)*ease;
+      if(bump){const d=frac-bump.t;w+=bump.amt*Math.exp(-(d*d)/(2*bump.sigma*bump.sigma));}
       const nx=-tn.y,ny=tn.x;
       L.push({x:pt.x+nx*w,y:pt.y+ny*w});
       R.push({x:pt.x-nx*w,y:pt.y-ny*w});
@@ -1548,7 +1576,7 @@ const SnakeRenderer={
   },
 
   render(){
-    const g=document.getElementById('snakesGroup');g.innerHTML='';this.pathMap={};this.headMap={};
+    const g=document.getElementById('snakesGroup');g.innerHTML='';this.pathMap={};this.headMap={};this.bodyMap={};this.segsMap={};
     let defs=document.getElementById('snakeDefs');
     if(!defs){defs=mksvg('defs',{id:'snakeDefs'});
       document.getElementById('gameBoard').insertBefore(defs,document.getElementById('gameBoard').firstChild);}
@@ -1603,8 +1631,10 @@ const SnakeRenderer={
       stroke:pal.glow,'stroke-width':'18','stroke-linecap':'round',opacity:'.6'}));
 
     /* Main tapered body */
-    sg.appendChild(mksvg('path',{d:this._ribbonPath(bSegs,6.5,.4),
-      fill:`url(#${gid})`,stroke:'none',filter:'url(#snkShadow)'}));
+    const bodyEl=mksvg('path',{d:this._ribbonPath(bSegs,6.5,.4),
+      fill:`url(#${gid})`,stroke:'none',filter:'url(#snkShadow)'});
+    sg.appendChild(bodyEl);
+    if(fromTile!=null){SnakeRenderer.bodyMap[fromTile]=bodyEl;SnakeRenderer.segsMap[fromTile]=bSegs;}
 
     /* Convex scale arcs across body width */
     const NS=24, samp=this._sample(bSegs,NS);
@@ -1683,7 +1713,7 @@ const SnakeRenderer={
     hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,.28)'}));
 
     sg.appendChild(hg);
-    SnakeRenderer.headMap[fromTile]=hg; // store for chomp/near-miss
+    if(fromTile!=null) SnakeRenderer.headMap[fromTile]=hg;
     sg.addEventListener('mouseenter',()=>{sg.style.filter='brightness(1.25)';});
     sg.addEventListener('mouseleave',()=>{sg.style.filter='';});
     g.appendChild(sg);
@@ -1871,101 +1901,123 @@ const Anim={
     });
   },
   async snakeSlide(pi,from,to){
-    const d=SnakeRenderer.pathMap[from];const path=mksvg('path',{d,fill:'none',visibility:'hidden'});
-    document.getElementById('gameBoard').appendChild(path);this._flashBoard('rgba(217,79,79,.09)');
+    const d=SnakeRenderer.pathMap[from];
+    const path=mksvg('path',{d,fill:'none',visibility:'hidden'});
+    document.getElementById('gameBoard').appendChild(path);
+    this._flashBoard('rgba(217,79,79,.09)');
     document.querySelectorAll('.active-ring').forEach(e=>e.remove());
-    await this.chomp(pi,from);                                    // ← chomp before slide
-    Tokens._stopBob(pi);await this._glidePath(pi,path,Config.GLIDE_SNAKE);
-    path.remove();Tokens._snap(pi,to);Tokens.pop(pi);UI.posDisplay(pi,to);
+    // Chomp swallows the token; bump carries it invisibly to the tail
+    await this._chomp(pi,from,path);
+    path.remove();
+    Tokens._snap(pi,to);
+    Tokens.els[pi].style.opacity='1';
+    Tokens.pop(pi);UI.posDisplay(pi,to);
     this._deltaPopup(to,`−${from-to}`,'#d94f4f');await wait(60);
   },
 
-  /* Snake chomps the token: head lunges forward, token shakes, then releases */
-  async chomp(pi,fromTile){
-    if(State.fast)return;
+  /* ── LUNGE ───────────────────────────────────────────────────────────────
+     Moves the head forward `lungePx` in its own facing direction using rAF
+     so we write directly to the SVG transform attribute — no CSS/SVG conflict.
+     Phase 0→35%: strike forward + scale up.
+     Phase 35→50%: hold peak (chomping moment).
+     Phase 50→100%: snap back with slight overshoot then settle.           */
+  _lungeFwd(hg,xfBase,lungePx,scalePeak,durationMs){
+    const mTr=xfBase.match(/translate\(([^,]+),([^)]+)\)/);
+    const mRo=xfBase.match(/rotate\(([^)]+)\)/);
+    const tx=mTr?+mTr[1]:0, ty=mTr?+mTr[2]:0;
+    const angle=mRo?+mRo[1]:0;
+    const rad=angle*Math.PI/180;
+    const fx=Math.cos(rad), fy=Math.sin(rad); // world-space facing direction
+
+    return new Promise(res=>{
+      const t0=performance.now();
+      function frame(now){
+        const p=Math.min((now-t0)/durationMs,1);
+        let lunge,sc;
+        if(p<.35){          // ── strike ──
+          const t=p/.35, e=t<.5?2*t*t:-1+(4-2*t)*t;
+          lunge=lungePx*e; sc=1+(scalePeak-1)*e;
+        }else if(p<.52){    // ── hold bite ──
+          lunge=lungePx; sc=scalePeak;
+        }else{              // ── snap back with tiny overshoot ──
+          const t=(p-.52)/.48, e=t<.5?2*t*t:-1+(4-2*t)*t;
+          const over=Math.sin(t*Math.PI)*.18; // small bounce
+          lunge=lungePx*(1-e)+lungePx*over*(1-t);
+          sc=scalePeak+(1-scalePeak)*e;
+        }
+        hg.setAttribute('transform',
+          `translate(${(tx+fx*lunge).toFixed(2)},${(ty+fy*lunge).toFixed(2)}) rotate(${angle}) scale(${sc.toFixed(3)})`);
+        if(p<1)requestAnimationFrame(frame);
+        else{hg.setAttribute('transform',xfBase);res();}
+      }
+      requestAnimationFrame(frame);
+    });
+  },
+
+  /* ── CHOMP sequence ──────────────────────────────────────────────────────
+     Phase 1 — Lunge: head strikes while token is still visible (dramatic!)
+     Phase 2 — Eat:   token fear-shakes then vanishes
+     Phase 3 — Bump:  lump travels body, hidden token rides inside          */
+  async _chomp(pi,fromTile,slidePath){
+    if(State.fast){Tokens.els[pi].style.opacity='0';return;}
     const hg=SnakeRenderer.headMap[fromTile];
     const tokenEl=Tokens.els[pi];
     if(!hg||!tokenEl)return;
 
-    Sound.chomp();vibrate([60,30,120,30,60]);
-
-    // Flash the tile red
-    this._flashBoard('rgba(217,30,30,.22)');
-
-    // Parse current head transform to get base translate+rotate
     const xfBase=hg.getAttribute('transform')||'';
 
-    // Token fear shake — rapid side-to-side
+    // ── Phase 1: LUNGE (token still visible — player sees the strike) ────
+    Sound.chomp();vibrate([60,30,120,30,60]);
+    this._flashBoard('rgba(217,30,30,.22)');
+    await this._lungeFwd(hg,xfBase,16,1.18,520);
+
+    // ── Phase 2: TOKEN FEAR-SHAKE → VANISH ───────────────────────────────
     const tkPos=tokenEl.getAttribute('transform')||'translate(0,0)';
-    tokenEl.animate([
-      {transform:tkPos},{transform:tkPos+' translate(-4px,-3px) scale(0.85)'},
-      {transform:tkPos+' translate(4px,2px) scale(0.9)'},{transform:tkPos+' translate(-3px,-2px) scale(0.8)'},
-      {transform:tkPos+' translate(2px,3px) scale(0.85)'},{transform:tkPos+' translate(0,0) scale(0)'},
-    ],{duration:400,easing:'ease-in',fill:'forwards'});
+    await new Promise(res=>{
+      tokenEl.animate([
+        {transform:tkPos},
+        {transform:tkPos+' translate(-4px,-3px) scale(.88)',offset:.2},
+        {transform:tkPos+' translate(4px,2px)  scale(.92)',offset:.4},
+        {transform:tkPos+' translate(-3px,-2px) scale(.82)',offset:.6},
+        {transform:tkPos+' translate(2px,3px)  scale(.88)',offset:.8},
+        {transform:tkPos+' scale(0)',offset:1},
+      ],{duration:300,easing:'ease-in',fill:'forwards'}).onfinish=res;
+    });
+    tokenEl.style.opacity='0';
 
-    // Head lunge — scale up + push forward slightly in local space
-    hg.animate([
-      {transform:xfBase},
-      {transform:xfBase+' scale(1.35) translate(4px,0)',offset:.3},
-      {transform:xfBase+' scale(1.4) translate(6px,0)',offset:.45},
-      {transform:xfBase+' scale(1.15) translate(2px,0)',offset:.65},
-      {transform:xfBase},
-    ],{duration:480,easing:'cubic-bezier(0.25,0.46,0.45,0.94)',fill:'forwards'});
-
-    await wait(480);
-
-    // Restore token to head position (it'll then glide down the snake)
-    tokenEl.style.opacity='1';
-    const hc=Board.center(fromTile);
-    tokenEl.setAttribute('transform',`translate(${hc.x},${hc.y})`);
+    // ── Phase 3: BUMP travels head → tail (token rides inside) ───────────
+    await this._animateBump(fromTile,slidePath,pi,1000);
     hg.setAttribute('transform',xfBase);
   },
 
-  /* Near-miss: snake lunges toward token and snaps but misses */
-  async nearMiss(pi,tokenTile,snakeFromTile){
-    if(State.fast)return;
-    const hg=SnakeRenderer.headMap[snakeFromTile];
-    const tokenEl=Tokens.els[pi];
-    if(!hg||!tokenEl)return;
-
-    Sound.nearMiss();vibrate([40,20,40]);
-
-    const xfBase=hg.getAttribute('transform')||'';
-    const snakeCenter=Board.center(snakeFromTile);
-    const tokenCenter=Board.center(tokenTile);
-
-    // Direction from snake head → token (normalised)
-    const dx=tokenCenter.x-snakeCenter.x, dy=tokenCenter.y-snakeCenter.y;
-    const len=Math.sqrt(dx*dx+dy*dy)||1;
-    const lunge=28; // px to lunge in world space
-    const lx=(dx/len*lunge).toFixed(1), ly=(dy/len*lunge).toFixed(1);
-
-    // Parse translate from head transform so we can offset in world space
-    const mBase=xfBase.match(/translate\(([^,]+),([^)]+)\)/);
-    const bx=mBase?+mBase[1]:snakeCenter.x, by=mBase?+mBase[2]:snakeCenter.y;
-    const lungeXf=`translate(${(bx+dx/len*lunge).toFixed(1)},${(by+dy/len*lunge).toFixed(1)}) rotate(${Math.atan2(dy,dx)*180/Math.PI+180})`;
-
-    // Token recoil
-    const tkPos=tokenEl.getAttribute('transform')||'translate(0,0)';
-    tokenEl.animate([
-      {transform:tkPos},
-      {transform:tkPos+` translate(${(-dx/len*6).toFixed(1)}px,${(-dy/len*6).toFixed(1)}px) scale(1.12)`,offset:.35},
-      {transform:tkPos+` translate(${(-dx/len*4).toFixed(1)}px,${(-dy/len*4).toFixed(1)}px) scale(1.06)`,offset:.6},
-      {transform:tkPos},
-    ],{duration:520,easing:'ease-out'});
-
-    // Head lunge toward token then snap back
-    hg.animate([
-      {transform:xfBase},
-      {transform:lungeXf,offset:.38},
-      {transform:lungeXf,offset:.52},
-      {transform:xfBase},
-    ],{duration:600,easing:'cubic-bezier(0.22,1,0.36,1)'});
-
-    // "CLOSE!" popup
-    this._deltaPopup(tokenTile,'😱 Close!','#ff4444');
-    await wait(620);
-    hg.setAttribute('transform',xfBase);
+  /* Redraws body ribbon each frame with a Gaussian bulge at position t.
+     Simultaneously moves the hidden token along the slide path so it
+     appears to sit inside the lump.                                    */
+  _animateBump(fromTile,slidePath,pi,durationMs){
+    const bodyEl=SnakeRenderer.bodyMap[fromTile];
+    const bSegs=SnakeRenderer.segsMap[fromTile];
+    const tokenEl=pi!=null?Tokens.els[pi]:null;
+    const pathTotal=slidePath?slidePath.getTotalLength():0;
+    if(!bodyEl||!bSegs)return Promise.resolve();
+    return new Promise(res=>{
+      const t0=performance.now();
+      function frame(now){
+        const p=Math.min((now-t0)/durationMs,1);
+        const eased=p<.5?2*p*p:-1+(4-2*p)*p; // ease-in-out
+        const bumpT=0.02+eased*0.96;
+        const bumpAmt=3.5*(1-Math.pow(eased,.65)); // starts ~= head width, shrinks to tail
+        bodyEl.setAttribute('d',SnakeRenderer._ribbonPath(bSegs,6.5,.4,
+          {t:bumpT,amt:bumpAmt,sigma:0.09}));
+        // Token follows the bump along the path
+        if(tokenEl&&slidePath&&pathTotal>0){
+          const pt=slidePath.getPointAtLength(eased*pathTotal);
+          tokenEl.setAttribute('transform',`translate(${pt.x.toFixed(1)},${pt.y.toFixed(1)})`);
+        }
+        if(p<1){requestAnimationFrame(frame);}
+        else{bodyEl.setAttribute('d',SnakeRenderer._ribbonPath(bSegs,6.5,.4));res();}
+      }
+      requestAnimationFrame(frame);
+    });
   },
   async ladderClimb(pi,from,to){
     const b=Board.center(from),tp=Board.center(to);
@@ -2222,9 +2274,9 @@ const Game={
     }
     const won=finalPos===100;
     const bonus=Config.bonusRoll&&roll===6&&!won&&!noMove;
-    // Near-miss: landed exactly 1 tile before a snake's head
-    const nearMissSnake=(!snakeHit&&!noMove&&!bounce&&target>0&&(target in {}||true))
-      ? Object.keys(Config.SNAKES).map(Number).find(s=>s===target+1)
+    // Near-miss: landed 1 tile before a snake head (only if no snake/ladder hit)
+    const nearMissSnake=(!snakeHit&&!noMove&&!bounce)
+      ? (Object.keys(Config.SNAKES).map(Number).find(s=>s===target+1)||null)
       : null;
     // Compute next player
     let nextPi=pi,nextTurnNum=State.turnNum;
@@ -2233,7 +2285,7 @@ const Game={
       if(nextPi===0)nextTurnNum=State.turnNum+1;
     }
     return{pi,roll,from,target,finalPos,bounce,noMove,
-      snakeHit,ladderHit,won,bonus,nearMissSnake:nearMissSnake||null,nextPi,nextTurnNum,ts:Date.now()};
+      snakeHit,ladderHit,won,bonus,nearMissSnake,nextPi,nextTurnNum,ts:Date.now()};
   },
 
   // Playback an event — runs full animation on every client
@@ -2264,11 +2316,10 @@ const Game={
     } else {
       Board.showTarget(target,p.color);await wait(State.fast?80:300);Board.clearTarget();
       await Anim.steps(pi,from,target);State.pos[pi]=target;
-      // Near-miss: snake lunges but misses
-      if(nearMissSnake){
-        UI.setStatus(`${p.name} narrowly escaped a snake!`);
-        UI.addLog(`${p.name} narrowly missed the snake at ${nearMissSnake}!`,'event');
-        await Anim.nearMiss(pi,target,nearMissSnake);
+      // Near-miss: show CLOSE CALL board notification
+      if(nearMissSnake&&!State.fast){
+        BoardNotif.show('CLOSE CALL',{sub:`snake at ${nearMissSnake}`,color:'#ff6b6b',duration:1800});
+        UI.addLog(`${p.name} narrowly avoided the snake at ${nearMissSnake}!`,'event');
       }
       if(snakeHit){
         UI.setStatus(`Snake! ${p.name}: ${snakeHit.from} → ${snakeHit.to}`);
@@ -2304,6 +2355,7 @@ const Game={
 
     if(bonus){
       UI.addLog(`${p.name} rolled 6 — bonus`,p.logClass);UI.setStatus(`${p.name} rolled 6 — roll again!`);
+      if(!State.fast) BoardNotif.show('EXTRA DICE',{sub:'roll again',color:'#c8a84b',duration:1700});
       State.busy=false;
       if(MP.active){const itm=MP.myIndex===pi;UI.setRoll(itm);if(!itm)UI.setStatus(`${p.name} rolled 6 — rolling again…`);}
       else if(Config.isAI(pi)){AI.turn();}
@@ -3351,8 +3403,61 @@ const Sheet={
   }
 };
 
+
+/* ── BOARD NOTIFICATION ─────────────────────────────────────────────────── */
+const BoardNotif={
+  _current:null,
+  _timer:null,
+  show(title,{sub='',color='#e8e8e8',duration=1900}={}){
+    this.clear();
+    const bw=document.getElementById('boardWrap');
+    if(!bw)return;
+    const wrap=document.createElement('div');
+    wrap.className='bnotif';
+    wrap.style.animationDuration=(duration/1000)+'s';
+    const inner=document.createElement('div');
+    inner.className='bnotif-inner';
+    const t=document.createElement('div');
+    t.className='bnotif-title';
+    t.style.color=color;
+    t.textContent=title;
+    inner.appendChild(t);
+    if(sub){
+      const s=document.createElement('div');
+      s.className='bnotif-sub';
+      s.style.color=color;
+      s.textContent=sub;
+      inner.appendChild(s);
+    }
+    wrap.appendChild(inner);
+    bw.appendChild(wrap);
+    this._current=wrap;
+    this._timer=setTimeout(()=>this.clear(),duration+80);
+  },
+  clear(){
+    clearTimeout(this._timer);
+    if(this._current){this._current.remove();this._current=null;}
+  }
+};
+
+/* ── MOBILE BOARD HEIGHT ────────────────────────────────────────────────── */
+function _syncBoardHeight(){
+  if(window.innerWidth>720)return;
+  let used=8;
+  [document.querySelector('#appRoot header'),
+   document.getElementById('turnBar'),
+   document.getElementById('bottomSheet')
+  ].forEach(el=>{if(el)used+=el.getBoundingClientRect().height;});
+  used+=12;
+  const avail=Math.max(100,window.innerHeight-used);
+  document.documentElement.style.setProperty('--bh',avail+'px');
+}
+
 /* ── BOOT ───────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded',()=>{
+  // Mobile board sizing — run on load and every resize
+  _syncBoardHeight();
+  window.addEventListener('resize',_syncBoardHeight);
   MP.initFirebase();
   Lobby.init();
   // Typing indicator wiring
