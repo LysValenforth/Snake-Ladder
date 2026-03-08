@@ -743,12 +743,19 @@ const LadderRenderer={
 /* ── DICE ───────────────────────────────────────────────────────────────── */
 const Dice={
   dots:{1:[[40,40]],2:[[23,23],[57,57]],3:[[23,23],[40,40],[57,57]],4:[[23,23],[57,23],[23,57],[57,57]],5:[[23,23],[57,23],[40,40],[23,57],[57,57]],6:[[23,20],[57,20],[23,40],[57,40],[23,60],[57,60]]},
-  render(v){const g=document.getElementById('diceDots');g.innerHTML='';(this.dots[v]||[]).forEach(([x,y])=>g.appendChild(mksvg('circle',{cx:x,cy:y,r:'5.5',fill:'#c8a84b'})));},
+  render(v){
+    const dots=(this.dots[v]||[]);
+    ['diceDots','sheetDiceDots'].forEach(id=>{
+      const g=document.getElementById(id);if(!g)return;
+      g.innerHTML='';
+      dots.forEach(([x,y])=>g.appendChild(mksvg('circle',{cx:x,cy:y,r:'5.5',fill:'#c8a84b'})));
+    });
+  },
   async roll(forcedValue=null){
-    const el=document.getElementById('diceSVG');el.classList.add('dice-rolling');
+    const el=document.getElementById('diceSVG');el.classList.add('dice-rolling');const sel=document.getElementById('sheetDiceSVG');if(sel)sel.classList.add('dice-rolling');
     const sched=State.fast?[60,70,80,90,100,120]:[150,165,185,215,255,305,370,450,530];
     for(const ms of sched){this.render(Math.ceil(Math.random()*6));await wait(ms);}
-    el.classList.remove('dice-rolling');
+    el.classList.remove('dice-rolling');if(sel)sel.classList.remove('dice-rolling');
     const r=forcedValue??Math.ceil(Math.random()*6);this.render(r);
     el.animate([{transform:'scale(1.08)',filter:'brightness(1.3)'},{transform:'scale(.97)',filter:'brightness(1)'},{transform:'scale(1)',filter:'brightness(1)'}],{duration:280,easing:'cubic-bezier(0.25,0.46,0.45,0.94)'});
     return r;

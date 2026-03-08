@@ -325,6 +325,13 @@ body.light .mobile-roll-btn{color:#f0ece4}
 .sheet-roll-btn:active{transform:scale(.96)}
 .sheet-roll-btn:disabled{opacity:.15;cursor:not-allowed}
 body.light .sheet-roll-btn{color:#f0ece4}
+.sheet-dice-wrap{
+  flex-shrink:0;
+  width:52px;height:52px;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.sheet-dice-svg{width:100%;height:100%;display:block;}
 
 /* ── MOBILE LAYOUT ─────────────────────────────────────────────────────── */
 @media(max-width:720px){

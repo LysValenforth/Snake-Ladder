@@ -300,6 +300,12 @@
 <div class="bottom-sheet" id="bottomSheet">
   <div class="sheet-handle"></div>
   <div class="sheet-roll-row">
+    <div class="sheet-dice-wrap" id="sheetDiceWrap">
+      <svg class="sheet-dice-svg" id="sheetDiceSVG" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="5" width="70" height="70" rx="12" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
+        <g id="sheetDiceDots"></g>
+      </svg>
+    </div>
     <div class="sheet-status" id="sheetStatus">Roll to begin.</div>
     <button class="sheet-roll-btn" id="sheetRollBtn" onclick="GameController.handleRoll()" disabled>Roll</button>
   </div>
