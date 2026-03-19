@@ -56,7 +56,7 @@ const Sound={
 /* ── PLAYERS ─────────────────────────────────────────────────────────────── */
 const ALL_PLAYERS=[
   {id:0,name:'Player 1',color:'#e8e8e8',text:'#060606',logClass:'p0'},
-  {id:1,name:'Player 2',color:'#c8a84b',text:'#060606',logClass:'p1'},
+  {id:1,name:'Player 2',color:'rgba(255,255,255,0.7)',text:'#060606',logClass:'p1'},
   {id:2,name:'Player 3',color:'#5cf6b0',text:'#060606',logClass:'p2'},
   {id:3,name:'Player 4',color:'#e056aa',text:'#060606',logClass:'p3'},
   {id:4,name:'Player 5',color:'#5b9cf6',text:'#060606',logClass:'p4'},
@@ -71,9 +71,12 @@ const Config={
   SNAKES:{...DEFAULT_SNAKES},
   LADDERS:{...DEFAULT_LADDERS},
   SNAKE_COLORS:[
-    {stroke:'#d94f4f',glow:'rgba(217,79,79,.12)'},{stroke:'#e0843a',glow:'rgba(224,132,58,.12)'},
-    {stroke:'#8b5cf6',glow:'rgba(139,92,246,.12)'},{stroke:'#2dd4a0',glow:'rgba(45,212,160,.12)'},
-    {stroke:'#e8c94a',glow:'rgba(232,201,74,.12)'},{stroke:'#e056aa',glow:'rgba(224,86,170,.12)'},
+    {stroke:'#8b2020',glow:'rgba(139,32,32,.18)'},    // deep blood red
+    {stroke:'#1a6b4a',glow:'rgba(26,107,74,.18)'},    // dark forest green
+    {stroke:'#4a2a7a',glow:'rgba(74,42,122,.18)'},    // deep violet
+    {stroke:'#7a3a10',glow:'rgba(122,58,16,.18)'},    // dark amber/rust
+    {stroke:'#1a4a6b',glow:'rgba(26,74,107,.18)'},    // deep steel blue
+    {stroke:'#6b1a3a',glow:'rgba(107,26,58,.18)'},    // dark plum
   ],
   AI_MIN:600,AI_MAX:1100,
   exactWin:false,bonusRoll:true,bounceBack:false,
@@ -181,7 +184,7 @@ const Settings={
     const locked=MP.active&&!MP.isHost;
     const s=document.createElement('div');s.className='settings-section';
     if(locked){
-      const note=document.createElement('div');note.style.cssText='font-size:.58rem;color:var(--gold);margin-bottom:10px;line-height:1.55;padding:7px 10px;border:1px solid rgba(200,168,75,.2);border-radius:4px;background:rgba(200,168,75,.06)';
+      const note=document.createElement('div');note.style.cssText='font-size:.58rem;color:var(--muted);margin-bottom:10px;line-height:1.55;padding:7px 10px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:rgba(255,255,255,.03)';
       note.textContent='⚑ Only the host can change rules.';s.appendChild(note);
     }
     s.appendChild(Object.assign(document.createElement('div'),{className:'settings-section-title',textContent:'Winning'}));
@@ -331,31 +334,55 @@ const Board={
     const O=Config.OFFSET;
     const el=document.getElementById('edgeLabels');el.innerHTML='';
     for(let c=0;c<10;c++){
-      const lbl=mksvg('text',{x:O+c*60+30,y:O*10+O+14,'text-anchor':'middle','dominant-baseline':'auto',fill:'var(--edge-label)','font-size':'9','font-family':'DM Mono,monospace','pointer-events':'none'});
+      const lbl=mksvg('text',{x:O+c*60+30,y:O*10+O+14,'text-anchor':'middle','dominant-baseline':'auto',fill:'rgba(255,255,255,0.2)','font-size':'8','font-family':'Cinzel,serif','pointer-events':'none'});
       lbl.textContent=c+1;el.appendChild(lbl);
     }
     for(let r=0;r<10;r++){
-      const lbl=mksvg('text',{x:O*0.5,y:O+r*60+30,'text-anchor':'middle','dominant-baseline':'central',fill:'var(--edge-label)','font-size':'9','font-family':'DM Mono,monospace','pointer-events':'none'});
+      const lbl=mksvg('text',{x:O*0.5,y:O+r*60+30,'text-anchor':'middle','dominant-baseline':'central',fill:'rgba(255,255,255,0.2)','font-size':'8','font-family':'Cinzel,serif','pointer-events':'none'});
       lbl.textContent=10-r;el.appendChild(lbl);
     }
     for(let t=1;t<=100;t++){
       const{x,y}=this.xy(t),even=(Math.floor((t-1)/10)+(t-1))%2===0;
       const isSH=SH.has(t),isLB=LB.has(t);
-      g.appendChild(mksvg('rect',{x,y,width:60,height:60,fill:even?'var(--tile-even)':'var(--tile-odd)',stroke:'var(--tile-border)','stroke-width':'0.8','data-tile':t}));
+      // Tiles: very subtle alternating, near-invisible borders
+      g.appendChild(mksvg('rect',{x,y,width:60,height:60,
+        fill:even?'#0c0c0c':'#080808',
+        stroke:'rgba(255,255,255,0.03)','stroke-width':'0.5','data-tile':t}));
       if(t===100){
-        const glow=mksvg('rect',{x,y,width:60,height:60,fill:'none',stroke:'rgba(200,168,75,.35)','stroke-width':'2','rx':'1','pointer-events':'none'});
-        glow.style.animation='winGlow 2s ease-in-out infinite';g.appendChild(glow);
-        const crown=mksvg('text',{x:x+55,y:y+14,'text-anchor':'end','dominant-baseline':'auto',fill:'rgba(200,168,75,.5)','font-size':'9','pointer-events':'none'});
-        crown.textContent='★';g.appendChild(crown);
+        // Dramatic crimson glow for tile 100
+        const glowOuter=mksvg('rect',{x:x+1,y:y+1,width:58,height:58,fill:'rgba(139,20,20,0.12)',rx:'1','pointer-events':'none'});
+        g.appendChild(glowOuter);
+        const glowBorder=mksvg('rect',{x:x+0.5,y:y+0.5,width:59,height:59,fill:'none',
+          stroke:'rgba(180,30,30,0.5)','stroke-width':'1.5',rx:'1','pointer-events':'none'});
+        glowBorder.style.animation='winGlow 2s ease-in-out infinite';
+        g.appendChild(glowBorder);
+        // Subtle mon/star mark
+        const crown=mksvg('text',{x:x+55,y:y+13,'text-anchor':'end','dominant-baseline':'auto',
+          fill:'rgba(180,30,30,0.6)','font-size':'8','pointer-events':'none','font-family':'serif'});
+        crown.textContent='✦';g.appendChild(crown);
       }
-      const lbl=mksvg('text',{x:x+5,y:y+15,'text-anchor':'start','dominant-baseline':'auto',fill:isSH?'#c05858':isLB?'#b89830':'var(--tile-num)','font-size':'11','font-family':'DM Mono,monospace','font-weight':'400','pointer-events':'none'});
+      // Tile numbers — muted white, no color coding
+      const lbl=mksvg('text',{x:x+5,y:y+14,'text-anchor':'start','dominant-baseline':'auto',
+        fill:'rgba(255,255,255,0.28)','font-size':'10','font-family':'Cinzel,serif',
+        'font-weight':'300','pointer-events':'none'});
       lbl.textContent=t;g.appendChild(lbl);
-      if(isSH){const dl=mksvg('text',{x:x+55,y:y+56,'text-anchor':'end','dominant-baseline':'auto',fill:'rgba(180,60,60,.6)','font-size':'8','pointer-events':'none'});dl.textContent=`−${t-Config.SNAKES[t]}`;g.appendChild(dl);}
-      if(isLB){const dl=mksvg('text',{x:x+55,y:y+56,'text-anchor':'end','dominant-baseline':'auto',fill:'rgba(160,130,40,.65)','font-size':'8','pointer-events':'none'});dl.textContent=`+${Config.LADDERS[t]-t}`;g.appendChild(dl);}
+      // Snake/ladder delta indicators — very subtle, monochrome
+      if(isSH){
+        const dl=mksvg('text',{x:x+55,y:y+56,'text-anchor':'end','dominant-baseline':'auto',
+          fill:'rgba(160,40,40,0.55)','font-size':'7.5','pointer-events':'none','font-family':'Cinzel,serif'});
+        dl.textContent=`−${t-Config.SNAKES[t]}`;g.appendChild(dl);
+      }
+      if(isLB){
+        const dl=mksvg('text',{x:x+55,y:y+56,'text-anchor':'end','dominant-baseline':'auto',
+          fill:'rgba(255,255,255,0.22)','font-size':'7.5','pointer-events':'none','font-family':'Cinzel,serif'});
+        dl.textContent=`+${Config.LADDERS[t]-t}`;g.appendChild(dl);
+      }
       const hit=mksvg('rect',{x,y,width:60,height:60,fill:'transparent','data-tile':t});
       this._attachTooltip(hit,t,isSH,isLB);g.appendChild(hit);
     }
-    g.appendChild(mksvg('rect',{x:O+.5,y:O+.5,width:599,height:599,fill:'none',stroke:'var(--border2)','stroke-width':'1'}));
+    // Very faint outer board border
+    g.appendChild(mksvg('rect',{x:O+.5,y:O+.5,width:599,height:599,fill:'none',
+      stroke:'rgba(255,255,255,0.08)','stroke-width':'1'}));
   },
   _tipTimer:null,
   _attachTooltip(el,t,isSH,isLB){
@@ -581,20 +608,35 @@ const SnakeRenderer={
     sg.appendChild(bodyEl);
     if(fromTile!=null){SnakeRenderer.bodyMap[fromTile]=bodyEl;SnakeRenderer.segsMap[fromTile]=bSegs;}
 
-    /* Convex scale arcs across body width */
-    const NS=24, samp=this._sample(bSegs,NS);
+    /* Overlapping scale rows — like the reference image */
+    const NS=40, samp=this._sample(bSegs,NS);
     for(let i=1;i<NS;i++){
       const{pt,tn}=samp[i];
-      const ease=1-Math.pow(i/NS,1.8);
-      const bw=(6.5*ease+.3)*.88;
+      const frac=i/NS;
+      const ease=1-Math.pow(frac,1.8);
+      const bw=(6.5*ease+.4)*.9;
       const nx=-tn.y, ny=tn.x;
-      const L={x:pt.x+nx*bw,y:pt.y+ny*bw};
-      const R={x:pt.x-nx*bw,y:pt.y-ny*bw};
-      const mid={x:pt.x+tn.x*bw*.32,y:pt.y+tn.y*bw*.32};
-      sg.appendChild(mksvg('path',{
-        d:`M${L.x.toFixed(2)},${L.y.toFixed(2)} Q${mid.x.toFixed(2)},${mid.y.toFixed(2)} ${R.x.toFixed(2)},${R.y.toFixed(2)}`,
-        fill:'none',stroke:`rgba(0,0,0,${(0.16+ease*.14).toFixed(2)})`,
-        'stroke-width':'.8','stroke-linecap':'round'}));
+      /* Two offset scale arcs per segment — staggered like real scales */
+      const offsets=i%2===0?[0]:[0.5];
+      offsets.forEach(off=>{
+        const L={x:pt.x+nx*(bw*(0.2+off*0.6)),y:pt.y+ny*(bw*(0.2+off*0.6))};
+        const R={x:pt.x-nx*(bw*(0.2+off*0.6)),y:pt.y-ny*(bw*(0.2+off*0.6))};
+        const apex={x:pt.x+tn.x*bw*0.4,y:pt.y+tn.y*bw*0.4};
+        samp.slice(i).forEach(()=>{});
+        /* Scale arc — convex forward like fish scales */
+        sg.appendChild(mksvg('path',{
+          d:`M${L.x.toFixed(1)},${L.y.toFixed(1)} Q${apex.x.toFixed(1)},${apex.y.toFixed(1)} ${R.x.toFixed(1)},${R.y.toFixed(1)}`,
+          fill:'none',
+          stroke:`rgba(0,0,0,${(0.18+ease*0.18).toFixed(2)})`,
+          'stroke-width':'0.9','stroke-linecap':'round'}));
+        /* Subtle lighter edge above each scale */
+        sg.appendChild(mksvg('path',{
+          d:`M${L.x.toFixed(1)},${L.y.toFixed(1)} Q${apex.x.toFixed(1)},${apex.y.toFixed(1)} ${R.x.toFixed(1)},${R.y.toFixed(1)}`,
+          fill:'none',
+          stroke:`rgba(255,255,255,${(0.04+ease*0.05).toFixed(2)})`,
+          'stroke-width':'0.4','stroke-linecap':'round',
+          'stroke-dasharray':'0','transform':`translate(${(-tn.x*0.8).toFixed(1)},${(-tn.y*0.8).toFixed(1)})`}));
+      });
     }
 
     /* Belly stripe */
@@ -615,44 +657,72 @@ const SnakeRenderer={
     const hg=mksvg('g',{transform:`translate(${head.x},${head.y}) rotate(${angle})`});
     const hc=pal.stroke;
 
-    /* ── Tongue — FIRST so it renders under hood/head ── */
-    const tgPos=mksvg('g',{transform:'translate(13,0)'});
-    const tgAnim=mksvg('g');
-    tgAnim.appendChild(mksvg('line',{x1:'0',y1:'0',x2:'5',y2:'0',
-      stroke:'#ff1533','stroke-width':'2.2','stroke-linecap':'round'}));
-    tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'-2',
-      stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
-    tgAnim.appendChild(mksvg('line',{x1:'5',y1:'0',x2:'9',y2:'2',
-      stroke:'#ff1533','stroke-width':'1.8','stroke-linecap':'round'}));
-    tgAnim.style.cssText=`transform-box:fill-box;transform-origin:left center;
+    /* Head is ~1.4× body width. Body half-width at head = ~6.5px, so head ry~9 rx~11 */
+    const HR=9, HRX=11; /* half-height, half-length */
+
+    /* ── Tongue exits RIGHT from snout tip — rendered behind head ── */
+    /* snout tip is at x = HRX = 11, tongue starts exactly there */
+    const tgAnim=mksvg('g',{transform:`translate(${HRX},0)`});
+    const tgInner=mksvg('g');
+    /* stem: short, starts flush at snout */
+    tgInner.appendChild(mksvg('path',{d:'M0,0 L5,0',
+      stroke:'#7a0000','stroke-width':'1.6','stroke-linecap':'round',fill:'none'}));
+    /* left fork */
+    tgInner.appendChild(mksvg('path',{d:'M5,0 L9,-2.5',
+      stroke:'#7a0000','stroke-width':'1.2','stroke-linecap':'round',fill:'none'}));
+    /* right fork */
+    tgInner.appendChild(mksvg('path',{d:'M5,0 L9,2.5',
+      stroke:'#7a0000','stroke-width':'1.2','stroke-linecap':'round',fill:'none'}));
+    tgInner.style.cssText=`transform-box:fill-box;transform-origin:0 center;
       animation:snkTongue ${(1.9+idx*.42).toFixed(1)}s ease-in-out infinite;`;
-    tgPos.appendChild(tgAnim);
-    hg.appendChild(tgPos);
+    tgAnim.appendChild(tgInner);
+    hg.appendChild(tgAnim);
 
-    /* Hood */
-    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'13',fill:'rgba(0,0,0,.22)',opacity:'.5'}));
-    hg.appendChild(mksvg('ellipse',{cx:'-2',cy:'0',rx:'9',ry:'12',fill:hc}));
-    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'-5',rx:'4',ry:'3',fill:'rgba(0,0,0,.15)'}));
-    hg.appendChild(mksvg('ellipse',{cx:'-3',cy:'5', rx:'4',ry:'3',fill:'rgba(0,0,0,.15)'}));
-    hg.appendChild(mksvg('ellipse',{cx:'-1',cy:'0', rx:'4',ry:'7', fill:'rgba(255,255,255,.10)'}));
+    /* ── Drop shadow ── */
+    hg.appendChild(mksvg('ellipse',{cx:'1',cy:'1.5',
+      rx:String(HRX),ry:String(HR),fill:'rgba(0,0,0,0.5)'}));
 
-    /* Head + snout */
-    hg.appendChild(mksvg('ellipse',{cx:'4', cy:'0', rx:'10',ry:'7', fill:hc}));
-    hg.appendChild(mksvg('ellipse',{cx:'2', cy:'-2.5',rx:'6',ry:'3',fill:'rgba(255,255,255,.18)'}));
-    hg.appendChild(mksvg('ellipse',{cx:'12',cy:'0', rx:'4',ry:'3.5',fill:hc}));
+    /* ── Main head oval — proportional to body ── */
+    hg.appendChild(mksvg('ellipse',{cx:'0',cy:'0',
+      rx:String(HRX),ry:String(HR),fill:hc}));
 
-    /* Eyes */
-    [[5,-6,.3],[5,6,-.3]].forEach(([ex,ey,py])=>{
-      const eg=mksvg('g',{transform:`translate(${ex},${ey})`});
-      eg.appendChild(mksvg('circle',{r:'3.2',fill:'#fff',opacity:'.95'}));
-      eg.appendChild(mksvg('circle',{cx:'.6',cy:String(py),r:'2',fill:'#111'}));
-      eg.appendChild(mksvg('circle',{cx:'1.1',cy:'-.65',r:'.7',fill:'rgba(255,255,255,.85)'}));
+    /* ── Subtle jaw line: slightly darker lower half ── */
+    hg.appendChild(mksvg('ellipse',{cx:'1',cy:'3',
+      rx:String(HRX*0.85),ry:String(HR*0.55),fill:'rgba(0,0,0,0.12)'}));
+
+    /* ── Snout cap — slightly lighter rounded front ── */
+    hg.appendChild(mksvg('ellipse',{cx:String(HRX*0.45),cy:'0',
+      rx:String(HRX*0.6),ry:String(HR*0.65),fill:'rgba(255,255,255,0.07)'}));
+
+    /* ── Scale plates on top of head (like reference image) ── */
+    /* Large center plate */
+    hg.appendChild(mksvg('path',{
+      d:`M2,-${HR*0.5} C5,-${HR*0.7} 8,-${HR*0.5} 8,0 C8,${HR*0.5} 5,${HR*0.7} 2,${HR*0.5} C-1,${HR*0.6} -3,${HR*0.4} -3,0 C-3,-${HR*0.4} -1,-${HR*0.6} 2,-${HR*0.5} Z`,
+      fill:'none',stroke:'rgba(0,0,0,0.25)','stroke-width':'0.9'}));
+    /* Side scale plates */
+    [[-6,-HR*0.55],[-6,HR*0.55]].forEach(([px,py])=>{
+      hg.appendChild(mksvg('ellipse',{cx:String(px),cy:String(py),
+        rx:'4',ry:'2.5',fill:'none',stroke:'rgba(0,0,0,0.2)','stroke-width':'0.7'}));
+    });
+    /* Snout plate */
+    hg.appendChild(mksvg('ellipse',{cx:String(HRX*0.7),cy:'0',
+      rx:'3.5',ry:'2.2',fill:'none',stroke:'rgba(0,0,0,0.2)','stroke-width':'0.7'}));
+
+    /* ── Eyes — small, dark, on sides of head like reference ── */
+    [[3, -(HR*0.72)],[3, HR*0.72]].forEach(([ex,ey])=>{
+      const eg=mksvg('g',{transform:`translate(${ex.toFixed(1)},${ey.toFixed(1)})`});
+      /* Dark eye socket */
+      eg.appendChild(mksvg('circle',{r:'2.6',fill:'#0a0a0a'}));
+      /* Iris — very dark, almost black like reference */
+      eg.appendChild(mksvg('circle',{r:'2',fill:'#1a1a1a'}));
+      /* Tiny specular glint */
+      eg.appendChild(mksvg('circle',{cx:'-0.7',cy:'-0.7',r:'0.7',fill:'rgba(255,255,255,0.6)'}));
       hg.appendChild(eg);
     });
 
-    /* Nostrils */
-    hg.appendChild(mksvg('circle',{cx:'13',cy:'-1.8',r:'1',fill:'rgba(0,0,0,.28)'}));
-    hg.appendChild(mksvg('circle',{cx:'13',cy:'1.8', r:'1',fill:'rgba(0,0,0,.28)'}));
+    /* ── Nostril dots near snout tip ── */
+    hg.appendChild(mksvg('circle',{cx:String(HRX*0.88),cy:'-2',r:'0.8',fill:'rgba(0,0,0,0.45)'}));
+    hg.appendChild(mksvg('circle',{cx:String(HRX*0.88),cy:'2', r:'0.8',fill:'rgba(0,0,0,0.45)'}));
 
     sg.appendChild(hg);
     if(fromTile!=null) SnakeRenderer.headMap[fromTile]={hg,xfBase:`translate(${head.x},${head.y}) rotate(${angle})`};
@@ -688,30 +758,30 @@ const LadderRenderer={
     const hw=8;                   // half-width between rails
     const lg=mksvg('g',{});
 
-    // ── Soft glow behind whole ladder
+    // ── Soft faint glow behind whole ladder
     lg.appendChild(mksvg('line',{
       x1:base.x,y1:base.y,x2:top.x,y2:top.y,
-      stroke:'rgba(200,168,75,0.07)','stroke-width':'20','stroke-linecap':'round'
+      stroke:'rgba(255,255,255,0.02)','stroke-width':'18','stroke-linecap':'round'
     }));
 
-    const railColor='#c8943a';
-    const railHighlight='rgba(255,210,120,0.55)';
-    const rungColor='#e8b84b';
-    const rungHighlight='rgba(255,235,160,0.6)';
+    const railColor='#3a2a1a';        // dark weathered wood
+    const railHighlight='rgba(100,70,40,0.5)'; // subtle wood grain
+    const rungColor='#4a3320';        // slightly lighter rung
+    const rungHighlight='rgba(120,90,55,0.4)';
 
     // ── Two rails
     [-hw, hw].forEach(side=>{
       const x1=base.x+nx*side, y1=base.y+ny*side;
       const x2=top.x+nx*side,  y2=top.y+ny*side;
-      // Rail shadow
+      // Rail outer shadow for depth
       lg.appendChild(mksvg('line',{x1,y1,x2,y2,
-        stroke:'rgba(0,0,0,0.18)','stroke-width':'4.5','stroke-linecap':'round'}));
-      // Rail body
+        stroke:'rgba(0,0,0,0.6)','stroke-width':'6','stroke-linecap':'round'}));
+      // Rail body — dark wood
       lg.appendChild(mksvg('line',{x1,y1,x2,y2,
-        stroke:railColor,'stroke-width':'3.2','stroke-linecap':'round'}));
-      // Rail shine stripe
-      lg.appendChild(mksvg('line',{x1:x1-ny*0.6,y1:y1+nx*0.6,x2:x2-ny*0.6,y2:y2+nx*0.6,
-        stroke:railHighlight,'stroke-width':'1','stroke-linecap':'round'}));
+        stroke:railColor,'stroke-width':'4','stroke-linecap':'round'}));
+      // Rail grain/highlight
+      lg.appendChild(mksvg('line',{x1:x1-ny*0.5,y1:y1+nx*0.5,x2:x2-ny*0.5,y2:y2+nx*0.5,
+        stroke:railHighlight,'stroke-width':'1.2','stroke-linecap':'round'}));
     });
 
     // ── Rungs
@@ -723,17 +793,17 @@ const LadderRenderer={
       const x2=rx-nx*(hw+1), y2=ry-ny*(hw+1);
       // Rung shadow
       lg.appendChild(mksvg('line',{x1,y1,x2,y2,
-        stroke:'rgba(0,0,0,0.15)','stroke-width':'3.5','stroke-linecap':'round'}));
-      // Rung body
+        stroke:'rgba(0,0,0,0.5)','stroke-width':'4','stroke-linecap':'round'}));
+      // Rung body — slightly lighter than rails
       lg.appendChild(mksvg('line',{x1,y1,x2,y2,
-        stroke:rungColor,'stroke-width':'2.5','stroke-linecap':'round'}));
-      // Rung highlight
+        stroke:rungColor,'stroke-width':'2.8','stroke-linecap':'round'}));
+      // Rung grain
       lg.appendChild(mksvg('line',{
-        x1:x1-ny*0.4,y1:y1+nx*0.4,x2:x2-ny*0.4,y2:y2+nx*0.4,
-        stroke:rungHighlight,'stroke-width':'0.9','stroke-linecap':'round'}));
-      // Little round knobs at rung ends where they meet the rails
-      lg.appendChild(mksvg('circle',{cx:x1,cy:y1,r:'2',fill:rungColor}));
-      lg.appendChild(mksvg('circle',{cx:x2,cy:y2,r:'2',fill:rungColor}));
+        x1:x1-ny*0.3,y1:y1+nx*0.3,x2:x2-ny*0.3,y2:y2+nx*0.3,
+        stroke:rungHighlight,'stroke-width':'0.8','stroke-linecap':'round'}));
+      // Knob joints — dark iron peg look
+      lg.appendChild(mksvg('circle',{cx:x1,cy:y1,r:'2.2',fill:'#2a1a0a'}));
+      lg.appendChild(mksvg('circle',{cx:x2,cy:y2,r:'2.2',fill:'#2a1a0a'}));
     }
 
     g.appendChild(lg);
@@ -748,7 +818,7 @@ const Dice={
     ['diceDots','sheetDiceDots'].forEach(id=>{
       const g=document.getElementById(id);if(!g)return;
       g.innerHTML='';
-      dots.forEach(([x,y])=>g.appendChild(mksvg('circle',{cx:x,cy:y,r:'5.5',fill:'#c8a84b'})));
+      dots.forEach(([x,y])=>g.appendChild(mksvg('circle',{cx:x,cy:y,r:'5.5',fill:'rgba(255,255,255,0.85)'})));
     });
   },
   async roll(forcedValue=null){
@@ -861,7 +931,7 @@ const Anim={
     Tokens._snap(pi,to);
     Tokens.els[pi].style.opacity='1';
     Tokens.pop(pi);UI.posDisplay(pi,to);
-    this._deltaPopup(to,`−${from-to}`,'#d94f4f');await wait(60);
+    this._deltaPopup(to,`−${from-to}`,'#b02020');await wait(60);
   },
 
   /* ── LUNGE ─────────────────────────────────────────────────────────────
@@ -955,11 +1025,11 @@ const Anim={
   async ladderClimb(pi,from,to){
     const b=Board.center(from),tp=Board.center(to);
     const path=mksvg('path',{d:`M${b.x},${b.y} L${tp.x},${tp.y}`,fill:'none',visibility:'hidden'});
-    document.getElementById('gameBoard').appendChild(path);this._flashBoard('rgba(200,168,75,.07)');
+    document.getElementById('gameBoard').appendChild(path);this._flashBoard('rgba(255,255,255,.04)');
     document.querySelectorAll('.active-ring').forEach(e=>e.remove());
     await wait(State.fast?60:220);Tokens._stopBob(pi);await this._glidePath(pi,path,Config.GLIDE_LADDER);
     path.remove();Tokens._snap(pi,to);Tokens.pop(pi);UI.posDisplay(pi,to);
-    this._deltaPopup(to,`+${to-from}`,'#c8a84b');await wait(60);
+    this._deltaPopup(to,`+${to-from}`,'rgba(255,255,255,0.7)');await wait(60);
   },
   _flashBoard(color){
     const el=document.getElementById('boardFlash');
@@ -981,7 +1051,7 @@ const Anim={
     document.getElementById('boardWrap').appendChild(div);setTimeout(()=>div.remove(),1600);
   },
   celebrate(winnerPI){
-    const colors=['#e8e8e8','#c8a84b','#d94f4f','#2dd4a0','#8b5cf6','#e056aa'];
+    const colors=['#e8e8e8','rgba(255,255,255,0.7)','#b02020','#2dd4a0','#8b5cf6','#e056aa'];
     let ox=50,oy=20;
     try{
       const svg=document.getElementById('gameBoard'),svgR=svg.getBoundingClientRect(),scale=svgR.width/630;
@@ -1177,14 +1247,16 @@ const Game={
       // All clients (including self) will animate the full move via playback
       Timer.stop();
       State.busy=true;UI.setRoll(false);
-      const roll=await Dice.roll();
-      Sound.roll();Anim.rollFlash();
-      UI.setStatus(`Rolling…`);
-      vibrate(18);
-      // Build complete event with all outcomes pre-computed
+      // Generate roll value INSTANTLY — don't wait for dice animation
+      const roll=Math.ceil(Math.random()*6);
       const pi=State.cur,from=State.pos[pi];
       const evt=this._buildEvent(pi,roll,from);
-      MP.pushEvent(evt); // all clients (incl. self) will call playback()
+      evt._localRoll=true;
+      // Push to Firebase BEFORE any animation — other clients get it instantly
+      MP.pushEvent(evt);
+      // Now animate locally while other clients are already animating
+      await Dice.roll(roll);Sound.roll();Anim.rollFlash();vibrate(18);
+      await this.playback({...evt,_fromExec:true});
       return;
     }
     if(Config.isAI(State.cur))return;
@@ -1223,7 +1295,8 @@ const Game={
 
   // Playback an event — runs full animation on every client
   async playback(evt){
-    if(State.busy&&!MP.active&&!evt._fromExec)return; // local only guard
+    // In MP, never block on State.busy — each client animates independently
+    if(!MP.active&&!evt._fromExec&&!evt._replay&&State.busy)return;
     State.busy=true;UI.setRoll(false);
     const{pi,roll,from,target,finalPos,bounce,noMove,snakeHit,ladderHit,won,bonus,nearMissSnake,nextPi,nextTurnNum}=evt;
     const p=State.players[pi];
@@ -1288,7 +1361,7 @@ const Game={
 
     if(bonus){
       UI.addLog(`${p.name} rolled 6 — bonus`,p.logClass);UI.setStatus(`${p.name} rolled 6 — roll again!`);
-      if(!State.fast) BoardNotif.show('EXTRA DICE',{sub:'roll again',color:'#c8a84b',duration:1700});
+      if(!State.fast) BoardNotif.show('EXTRA DICE',{sub:'roll again',color:'rgba(255,255,255,0.7)',duration:1700});
       State.busy=false;
       if(MP.active){const itm=MP.myIndex===pi;UI.setRoll(itm);if(!itm)UI.setStatus(`${p.name} rolled 6 — rolling again…`);}
       else if(Config.isAI(pi)){AI.turn();}
@@ -1471,15 +1544,16 @@ const Replay={
     const savedStats=State.stats.map(s=>({...s}));
     // Reset board visually
     State.pos=Array(State.numPlayers).fill(1);
-    State.cur=0;State.over=false;State.turnNum=1;
+    State.cur=0;State.over=false;State.busy=false;State.turnNum=1;
     State.stats=Array.from({length:State.numPlayers},()=>({r:0,s:0,l:0}));
     Tokens._placeAll();UI.updateActive();
     State.players.forEach((_,i)=>{UI.posDisplay(i,1);UI.updateStats(i);});
     document.getElementById('turnCount').textContent='1';
-    UI.setStatus('Replaying…');UI.setRoll(false);
+    UI.hideWin();UI.setStatus('Replaying…');UI.setRoll(false);
     // Replay each event
     for(const evt of this._events){
-      await new Promise(r=>setTimeout(r,600));
+      await new Promise(r=>setTimeout(r,500));
+      State.busy=false; // reset before each event so playback isn't blocked
       await Game.playback({...evt,_replay:true});
     }
     // Restore
@@ -1706,6 +1780,8 @@ const MP={
     this._eventsRef.orderByChild('ts').startAt(this._joinTs).on('child_added',snap=>{
       const evt=snap.val();if(!evt)return;
       Replay.store(evt);
+      // Skip if this client is the one who rolled (already played back immediately)
+      if(evt.pi===this.myIndex&&evt._localRoll)return;
       this._eventQueue.push(evt);
       this._drainQueue();
     });
@@ -1773,6 +1849,8 @@ const MP={
     if(this._processingEvent||this._eventQueue.length===0)return;
     this._processingEvent=true;
     const evt=this._eventQueue.shift();
+    // Don't block on State.busy — other client events should play immediately
+    State.busy=false;
     await Game.playback(evt);
     this._processingEvent=false;
     this._drainQueue();
@@ -1808,7 +1886,9 @@ const MP={
       this._eventsRef=firebase.database().ref(`rooms/${this.roomCode}/events`);
       this._eventsRef.orderByChild('ts').startAt(this._joinTs).on('child_added',snap=>{
         const evt=snap.val();if(!evt)return;
-        Replay.store(evt);this._eventQueue.push(evt);this._drainQueue();
+        Replay.store(evt);
+        if(evt.pi===this.myIndex&&evt._localRoll)return;
+        this._eventQueue.push(evt);this._drainQueue();
       });
     }
     UI.hideWin();Game._build();UI.clearLog();
@@ -2004,6 +2084,7 @@ const Lobby={
     document.getElementById('roomCodeText').textContent=code;
     document.getElementById('waitingRoom').style.display='block';
     document.getElementById('startGameBtn').disabled=true;
+    this._initWaitingInputs(name,colorIndex);
     this._waitRef=firebase.database().ref(`rooms/${code}/players`);
     this._waitRef.on('value',snap=>{
       const players=snap.val()||{};
@@ -2038,6 +2119,49 @@ const Lobby={
     if(!confirm('Kick this player?'))return;
     firebase.database().ref(`rooms/${MP.roomCode}/players/${idx}`).update({kicked:true,connected:false});
     setTimeout(()=>firebase.database().ref(`rooms/${MP.roomCode}/players/${idx}`).remove(),2000);
+  },
+
+  _nameDebounce:null,
+  _initWaitingInputs(name,colorIndex){
+    this._selectedColor=colorIndex; // ← was missing — fixes updateWaitingName using wrong color
+    const inp=document.getElementById('waitingNameInput');
+    if(inp){inp.value=name;}
+    const row=document.getElementById('waitingColorRow');
+    if(!row)return;
+    row.innerHTML='';
+    ALL_PLAYERS.forEach((p,i)=>{
+      const sw=document.createElement('div');
+      sw.style.cssText=`background:${p.color};width:24px;height:24px;border-radius:50%;cursor:pointer;box-sizing:border-box;border:2px solid ${i===colorIndex?'#fff':'transparent'};flex-shrink:0;transition:border-color .15s,transform .12s`;
+      sw.addEventListener('click',()=>{
+        this._selectedColor=i;
+        row.querySelectorAll('div').forEach((s,si)=>{s.style.borderColor=si===i?'#fff':'transparent';});
+        this._pushWaitingName(document.getElementById('waitingNameInput')?.value||'');
+      });
+      row.appendChild(sw);
+    });
+  },
+
+  _pushWaitingName(val){
+    const name=val.trim()||`Player ${(this._selectedColor||0)+1}`;
+    this._joinedName=name;
+    this._joinedColor=this._selectedColor;
+    if(MP.roomCode&&MP.myIndex>=0){
+      firebase.database().ref(`rooms/${MP.roomCode}/players/${MP.myIndex}`).update({
+        name,colorIndex:this._selectedColor
+      });
+    }
+    if(State.players&&State.players[MP.myIndex]){
+      State.players[MP.myIndex].name=name;
+      const base=ALL_PLAYERS[this._selectedColor]||ALL_PLAYERS[0];
+      State.players[MP.myIndex].color=base.color;
+      State.players[MP.myIndex].text=base.text;
+    }
+  },
+
+  updateWaitingName(val){
+    // Debounce Firebase write by 400ms so typing feels instant
+    clearTimeout(this._nameDebounce);
+    this._nameDebounce=setTimeout(()=>this._pushWaitingName(val),400);
   },
 
   cancelWaiting(){
@@ -2092,6 +2216,7 @@ const Lobby={
     document.getElementById('lobbyError').style.display='none';
     document.getElementById('roomCodeText').textContent=MP.roomCode;
     document.getElementById('waitingRoom').style.display='block';
+    this._initWaitingInputs(this._joinedName||'',this._joinedColor||0);
 
     // Non-host: replace Start Game button with a "Waiting for host…" label
     const sb=document.getElementById('startGameBtn');
@@ -2323,7 +2448,7 @@ const Sheet={
         row.innerHTML=`<div style="width:3px;height:28px;border-radius:2px;background:${p.color};flex-shrink:0"></div>`+
           `<div style="flex:1;min-width:0"><div style="font-size:.68rem;color:${active?'var(--text)':'var(--muted)'};text-transform:uppercase;letter-spacing:.08em">${p.name}</div>`+
           `<div style="font-size:.62rem;color:var(--muted);margin-top:2px">Tile ${State.pos[i]} · ${State.stats[i]?.rolls||0} rolls</div></div>`+
-          `${active?'<div style="font-size:.52rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase">Your turn</div>':''}`;
+          `${active?'<div style="font-size:.52rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase">Your turn</div>':''}`;
         body.appendChild(row);
       });
     } else if(this._tab==='chat'){
@@ -2426,4 +2551,3 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   });
 });
-

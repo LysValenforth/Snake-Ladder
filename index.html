@@ -4,10 +4,13 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>SERPENTS &amp; LADDERS — MULTIPLAYER</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23060606'/%3E%3Crect x='1' y='1' width='30' height='30' rx='5' fill='none' stroke='%23222' stroke-width='1'/%3E%3C!-- Ladder --%3E%3Cline x1='8' y1='4' x2='8' y2='28' stroke='%23c8a84b' stroke-width='2.2' stroke-linecap='round'/%3E%3Cline x1='14' y1='4' x2='14' y2='28' stroke='%23c8a84b' stroke-width='2.2' stroke-linecap='round'/%3E%3Cline x1='8' y1='9' x2='14' y2='9' stroke='%23e8c46a' stroke-width='1.8' stroke-linecap='round'/%3E%3Cline x1='8' y1='15' x2='14' y2='15' stroke='%23e8c46a' stroke-width='1.8' stroke-linecap='round'/%3E%3Cline x1='8' y1='21' x2='14' y2='21' stroke='%23e8c46a' stroke-width='1.8' stroke-linecap='round'/%3E%3C!-- Snake body --%3E%3Cpath d='M19 27 C16 27 16 22 19 22 C22 22 22 17 19 17 C16 17 16 12 19 12' stroke='%23d94f4f' stroke-width='2.8' stroke-linecap='round' fill='none'/%3E%3C!-- Snake head --%3E%3Cellipse cx='22' cy='10' rx='4' ry='2.8' fill='%23d94f4f'/%3E%3Ccircle cx='23.2' cy='9' r='.9' fill='%23fff' opacity='.9'/%3E%3C!-- Tongue --%3E%3Cline x1='25.8' y1='10' x2='28.5' y2='8.5' stroke='%23ff1533' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='25.8' y1='10' x2='28.5' y2='11.5' stroke='%23ff1533' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"/>
+
+<!-- Ghost of Tsushima inspired favicon: mon crest with snake -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='bg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0' stop-color='%231a1208'/%3E%3Cstop offset='1' stop-color='%230a0806'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='4' fill='url(%23bg)'/%3E%3C!-- Outer ring ---%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23c8972a' stroke-width='0.7' opacity='0.7'/%3E%3C!-- Inner ring ---%3E%3Ccircle cx='16' cy='16' r='11' fill='none' stroke='%23c8972a' stroke-width='0.4' opacity='0.4'/%3E%3C!-- Torii gate ---%3E%3Cline x1='8' y1='12' x2='24' y2='12' stroke='%23c8972a' stroke-width='1.2' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='9.5' y1='10.2' x2='22.5' y2='10.2' stroke='%23c8972a' stroke-width='0.8' stroke-linecap='round' opacity='0.7'/%3E%3Cline x1='11' y1='12' x2='11' y2='22' stroke='%23c8972a' stroke-width='1.1' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='21' y1='12' x2='21' y2='22' stroke='%23c8972a' stroke-width='1.1' stroke-linecap='round' opacity='0.9'/%3E%3C!-- Snake ---%3E%3Cpath d='M14 22 C11.5 22 11.5 19 14 19 C16.5 19 16.5 16 14 16 C11.5 16 11.5 13.5 14 13.5' stroke='%238b1a1a' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3Cellipse cx='17' cy='12.5' rx='2.5' ry='1.8' fill='%238b1a1a'/%3E%3Ccircle cx='17.8' cy='11.9' r='0.55' fill='%23f0e8d8' opacity='.9'/%3E%3Cline x1='19.4' y1='12.5' x2='21.2' y2='11.4' stroke='%23c43030' stroke-width='0.9' stroke-linecap='round'/%3E%3Cline x1='19.4' y1='12.5' x2='21.2' y2='13.6' stroke='%23c43030' stroke-width='0.9' stroke-linecap='round'/%3E%3C/svg%3E"/>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;500;600&family=Cinzel+Decorative:wght@300;400&family=IM+Fell+English:ital@0;1&family=Noto+Serif+JP:wght@200;300;400&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
@@ -15,8 +18,10 @@
 <!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════════ -->
 <div id="splashScreen" class="splash-screen">
   <div class="splash-inner">
+    <div class="splash-mon">蛇と梯子</div>
     <div class="splash-logo">SERPENTS &amp; <span>LADDERS</span></div>
-    <div class="splash-sub">MULTIPLAYER</div>
+    <div class="splash-sub">Multiplayer</div>
+    <div class="splash-credit">A Lin Production</div>
     <div class="splash-bar"><div class="splash-fill"></div></div>
   </div>
 </div>
@@ -25,11 +30,11 @@
 <div id="lobbyOverlay" class="lobby-overlay">
   <div class="lobby-card">
     <div>
-      <div class="lobby-logo">SERPENTS &amp; LADDERS</div>
-      <div class="lobby-sub">MULTIPLAYER</div>
+      <div class="lobby-logo">SERPENTS &amp; <span>LADDERS</span></div>
+      <div class="lobby-sub">蛇と梯子 · A Lin Production</div>
     </div>
     <div id="inviteBanner" class="invite-banner">
-      <div class="invite-banner-title">You're Invited!</div>
+      <div class="invite-banner-title">You're Invited</div>
       <div class="invite-banner-sub">Join room <span class="invite-banner-code" id="inviteBannerCode"></span>Enter your name and colour, then hit Join.</div>
     </div>
     <div>
@@ -89,6 +94,12 @@
           </div>
         </div>
         <div style="height:10px"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <input id="waitingNameInput" class="lobby-input" type="text" placeholder="Your name" maxlength="16" autocomplete="off"
+            style="flex:1;padding:7px 10px;font-size:.72rem"
+            oninput="Lobby.updateWaitingName(this.value)"/>
+          <div id="waitingColorRow" style="display:flex;gap:6px;flex-shrink:0"></div>
+        </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
           <div class="lobby-section-title" style="margin-bottom:0">Connected Players</div>
           <div style="display:flex;align-items:center;gap:6px;font-size:.56rem;color:var(--muted)">
@@ -107,7 +118,7 @@
       </div>
 
       <div id="joinSection" style="margin-top:10px">
-        <div style="font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:7px">— or join existing —</div>
+        <div style="font-size:.52rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;font-family:var(--font-jp)">— or join existing —</div>
         <div class="lobby-row">
           <input id="joinCodeInput" class="lobby-input code-field" type="text" placeholder="CODE" maxlength="4" autocomplete="off"/>
           <button class="lobby-btn" id="joinRoomBtn" onclick="Lobby.joinRoom(false)" style="padding:10px 16px;width:auto;flex-shrink:0">Join</button>
@@ -125,7 +136,7 @@
 
     <div id="noFirebaseNote" class="no-firebase-note" style="display:none">
       <strong>⚠ Firebase not configured</strong><br>
-      Online play is unavailable. Replace the placeholder values in <strong>FIREBASE_CONFIG</strong> at the top of the script. Local play works without it.
+      Online play is unavailable. Replace the placeholder values in <strong>FIREBASE_CONFIG</strong> at the top of the script.
     </div>
     <div class="lobby-divider"><span>or</span></div>
     <button class="lobby-btn outline" onclick="Lobby.playLocal()">Play Local</button>
@@ -136,8 +147,8 @@
 <div class="app" id="appRoot" style="display:none">
   <header>
     <div>
-      <div class="logo">SERPENTS &amp; LADDERS</div>
-      <div class="logo-sub">CLASSIC BOARD GAME</div>
+      <div class="logo">SERPENTS &amp; <span style="color:var(--crimson2)">LADDERS</span></div>
+      <div class="logo-sub">A Lin Production</div>
     </div>
     <div class="header-controls">
       <button class="icon-btn" id="muteBtn" onclick="Sound.toggle()" title="Toggle sound (M)">♪</button>
@@ -176,7 +187,6 @@
     </div>
   </div>
 
-  <!-- Mobile roll sits between board and side panels -->
   <div class="mobile-roll-area">
     <button class="mobile-roll-btn" id="mobileRollBtn" onclick="GameController.handleRoll()" aria-label="Roll dice">Roll</button>
   </div>
@@ -207,7 +217,7 @@
       <div class="panel dice-panel side-roll-only">
         <div class="dice-wrap" id="diceWrap" title="Click to roll">
           <svg id="diceSVG" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-            <rect x="5" y="5" width="70" height="70" rx="12" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
+            <rect x="5" y="5" width="70" height="70" rx="8" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
             <g id="diceDots"></g>
           </svg>
         </div>
@@ -219,7 +229,6 @@
         </div>
       </div>
 
-      <!-- Status -->
       <div class="panel">
         <div class="panel-label">Status</div>
         <div class="status-msg" id="statusMsg" role="status" aria-live="polite">Roll to begin.</div>
@@ -229,7 +238,6 @@
         </div>
       </div>
 
-      <!-- Log -->
       <div class="panel log-section">
         <div class="log-header">
           <span class="panel-label" style="margin-bottom:0">Log</span>
@@ -238,18 +246,15 @@
         <div class="log-list" id="logList"></div>
       </div>
 
-      <!-- Restart -->
       <div class="actions-row">
         <button class="restart-btn" onclick="GameController.restart()">
           Restart <kbd style="font-size:.42rem;padding:1px 4px;background:var(--dim);border:1px solid var(--border2);border-radius:2px;color:#888;font-family:inherit">R</kbd>
         </button>
       </div>
 
-      <!-- Chat (online only) -->
       <div class="panel chat-panel" id="chatPanel" style="display:none">
         <div class="panel-label">Chat</div>
 
-        <!-- SVG Reactions bar -->
         <div class="reactions-bar" id="reactionsBar">
           <button class="react-btn react-burst" onclick="MP.pushReaction('burst')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -258,6 +263,14 @@
               <circle cx="13" cy="4" r=".9" fill="currentColor" stroke="none"/><circle cx="16.5" cy="7" r=".7" fill="currentColor" stroke="none"/><circle cx="11" cy="9" r=".7" fill="currentColor" stroke="none"/><circle cx="15.5" cy="13" r=".6" fill="currentColor" stroke="none"/>
             </svg>
             <span class="react-tip">Celebrate</span>
+          </button>
+          <button class="react-btn react-skull" onclick="MP.pushReaction('skull')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 2.5C6.4 2.5 3.5 5.2 3.5 8.5c0 2.1 1.1 4 2.8 5.1V15h7.4v-1.4c1.7-1.1 2.8-3 2.8-5.1 0-3.3-2.9-6-6.5-6z"/>
+              <line x1="7.2" y1="15" x2="7.2" y2="17.5"/><line x1="10" y1="15" x2="10" y2="17.5"/><line x1="12.8" y1="15" x2="12.8" y2="17.5"/>
+              <circle cx="7.8" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12.2" cy="8.5" r="1.3" fill="currentColor" stroke="none"/>
+            </svg>
+            <span class="react-tip">Defeated</span>
           </button>
           <button class="react-btn react-snake" onclick="MP.pushReaction('snake')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -275,7 +288,7 @@
           </button>
           <button class="react-btn react-thumbsup" onclick="MP.pushReaction('thumbsup')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.5L9.2 3C10.2 3 11.2 3.7 11.2 5V8H15.5C16.2 8 16.8 8.6 16.6 9.3L15.3 15C15.1 15.7 14.4 16.5 13.6 16.5H7"/><rect x="3.5" y="9.5" width="3.5" height="7" rx="1" fill="currentColor" stroke="none" opacity=".7"/></svg>
-            <span class="react-tip">Nice</span>
+            <span class="react-tip">Honour</span>
           </button>
           <button class="react-btn react-fire" onclick="MP.pushReaction('fire')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z" fill="currentColor" stroke="none" opacity=".18"/><path d="M10 17.5C6.9 17.5 4 15 4 12C4 8.5 7 6.5 7 3.5C9 5 9 7.5 10 7.5C10.5 6 11.2 4.2 12.8 2.5C12.8 5.5 16 7.5 16 11.5C16 15 13.1 17.5 10 17.5Z"/></svg>
@@ -293,8 +306,8 @@
         </div>
       </div>
 
-    </div><!-- /.side -->
-  </div><!-- /.game-area -->
+    </div>
+  </div>
 
 <!-- ══ MOBILE BOTTOM SHEET ════════════════════════════════════════════════ -->
 <div class="bottom-sheet" id="bottomSheet">
@@ -302,7 +315,7 @@
   <div class="sheet-roll-row">
     <div class="sheet-dice-wrap" id="sheetDiceWrap">
       <svg class="sheet-dice-svg" id="sheetDiceSVG" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
-        <rect x="5" y="5" width="70" height="70" rx="12" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
+        <rect x="5" y="5" width="70" height="70" rx="8" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
         <g id="sheetDiceDots"></g>
       </svg>
     </div>
@@ -320,7 +333,7 @@
 <!-- ══ WIN OVERLAY ════════════════════════════════════════════════════════ -->
 <div class="win-overlay" id="winOverlay" style="display:none" role="dialog" aria-modal="true" aria-label="Game over">
   <div class="win-card">
-    <div class="win-label">Winner</div>
+    <div class="win-label">栄誉ある勝者 · Victor</div>
     <div class="win-title" id="winTitle">Player 1</div>
     <div class="win-sub" id="winSub">Reached tile 100</div>
     <div class="win-stats" id="winStats"></div>
@@ -336,7 +349,7 @@
     <div class="win-btns">
       <button class="restart-btn" onclick="GameController.restart()">Play Again</button>
       <button class="rematch-btn" id="rematchBtn" onclick="MP.startVote()" style="display:none">Rematch</button>
-      <button class="replay-btn" id="replayBtn" onclick="Replay.open()" style="display:none;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:10px 20px;border-radius:5px;cursor:pointer">▶ Replay</button>
+      <button class="replay-btn" id="replayBtn" onclick="Replay.open()" style="display:none;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;padding:10px 20px;border-radius:2px;cursor:pointer">▶ Replay</button>
     </div>
   </div>
 </div>
